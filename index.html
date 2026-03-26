@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calcul Mental – Classe</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#09080f;--surface:#13111f;--border:rgba(255,255,255,.08);
+  --c1:#6bcb77;--c2:#4d96ff;--c3:#ffd93d;--c4:#ff6b6b;
+  --text:#fffffe;--muted:#8a88a0;--font:'Nunito',Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:var(--font);overflow:hidden;color:var(--text);}
+
+/* STARS */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d) var(--dl) infinite alternate;opacity:.18;}
+@keyframes twinkle{to{opacity:.7;transform:scale(2);}}
+
+/* ══ SETUP ══ */
+#setup{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:18px 16px 28px;}
+.setup-title{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;background:linear-gradient(135deg,#ffd93d,#ff6b6b,#c77dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(255,107,107,.3));text-align:center;}
+.setup-card{background:#13111f;border:1px solid var(--border);border-radius:22px;padding:24px 28px;width:min(860px,98vw);box-shadow:0 24px 64px rgba(0,0,0,.6);}
+.slabel{font-size:.75rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+
+/* Ops */
+.ops-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.op-btn{background:#1e1b2e;border:2px solid transparent;border-radius:12px;padding:12px 6px;font-size:1.5rem;font-weight:900;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.op-btn span.op-icon{font-size:1.6rem;}
+.op-btn span.op-name{font-size:.72rem;font-weight:800;letter-spacing:.05em;}
+.op-btn:hover{border-color:#4d96ff;color:var(--text);}
+.op-btn.on{border-color:var(--c3);color:var(--c3);background:rgba(255,217,61,.1);}
+
+/* Sous-menus */
+.submenus{display:none;margin-bottom:18px;}
+.submenus.visible{display:block;}
+.sub-op-panel{display:none;}
+.sub-op-panel.active{display:block;}
+.diff-section{margin-bottom:12px;}
+.diff-label{font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+.diff-stars{color:var(--c3);letter-spacing:1px;}
+.calc-types-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;}
+.calc-type-btn{background:#1e1b2e;border:1.5px solid transparent;border-radius:10px;padding:8px 12px;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;text-align:left;line-height:1.3;font-family:var(--font);}
+.calc-type-btn:hover{border-color:rgba(255,255,255,.2);color:var(--text);}
+.calc-type-btn.selected{border-color:var(--c3);color:var(--c3);background:rgba(255,217,61,.1);}
+
+/* Sélection hint */
+.select-hint{text-align:center;font-size:1.05rem;font-weight:800;color:var(--c3);margin-bottom:14px;min-height:1.4em;letter-spacing:.02em;}
+
+/* ── Icônes temps ── */
+.param-section{margin-bottom:18px;}
+.icon-picker{display:flex;gap:8px;flex-wrap:wrap;}
+.ico-btn{background:#1e1b2e;border:2px solid transparent;border-radius:12px;padding:10px 14px;font-size:1rem;font-weight:900;color:var(--muted);cursor:pointer;transition:all .15s;min-width:58px;text-align:center;font-family:var(--font);}
+.ico-btn:hover{border-color:rgba(255,255,255,.25);color:var(--text);}
+.ico-btn.on{border-color:var(--c2);color:var(--c2);background:rgba(77,150,255,.12);}
+.ico-btn sub{font-size:.6rem;display:block;color:var(--muted);margin-top:1px;font-weight:700;}
+
+/* Temps + calculs sur la même ligne */
+.params-inline{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px;}
+.params-inline .param-section{flex:1;min-width:200px;margin-bottom:0;}
+
+/* Toggle réponses en révision */
+.btn-rev-toggle{background:#1e1b2e;border:2px solid var(--c3);border-radius:9px;padding:7px 16px;font-size:.88rem;font-weight:800;color:var(--c3);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-rev-toggle:hover{background:rgba(255,217,61,.15);}
+.btn-rev-toggle.hidden-ans{background:var(--c3);color:#1a1200;}
+
+.btn-go{width:100%;padding:16px;background:linear-gradient(135deg,#ff6b6b,#c77dff);border:none;border-radius:15px;font-size:1.4rem;font-weight:900;color:#fff;cursor:pointer;transition:all .2s;box-shadow:0 8px 28px rgba(255,107,107,.35);font-family:var(--font);margin-top:4px;}
+.btn-go:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(255,107,107,.5);}
+.btn-go:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ══ SESSION ══ */
+#session{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;}
+
+/* Barre de progression globale en haut */
+.global-progress{height:5px;background:rgba(255,255,255,.06);flex-shrink:0;}
+.global-progress-fill{height:100%;background:linear-gradient(90deg,var(--c2),var(--c3));transition:width .4s ease;border-radius:0 3px 3px 0;}
+
+.top-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px;background:rgba(9,8,15,.92);border-bottom:1px solid var(--border);gap:12px;backdrop-filter:blur(10px);}
+.top-title{font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,#ffd93d,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+
+/* Opération N/total — encore plus gros */
+.top-qinfo{font-size:1.6rem;font-weight:800;color:var(--muted);white-space:nowrap;}
+.top-qinfo strong{color:var(--text);font-size:1.9rem;}
+.top-qinfo .op-word{color:var(--c3);}
+
+/* Timer plus grand */
+.gtimer-ring{position:relative;width:80px;height:80px;flex-shrink:0;}
+.gtimer-svg{transform:rotate(-90deg);}
+.gtrack{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7;}
+.gbar{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .88s linear,stroke .3s;}
+.gtimer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;}
+
+.top-btns{display:flex;gap:8px;align-items:center;}
+.btn-top{background:#1e1b2e;border:1.5px solid var(--border);border-radius:9px;padding:7px 13px;font-size:.88rem;font-weight:800;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font);display:flex;align-items:center;gap:5px;}
+.btn-top.pause:hover{border-color:var(--c3);color:var(--c3);}
+.btn-top.stop:hover{border-color:var(--c4);color:var(--c4);}
+.btn-top.manual{border-color:rgba(77,150,255,.4);}
+.btn-top.manual.active{border-color:var(--c2);color:var(--c2);background:rgba(77,150,255,.12);}
+.btn-top.manual:hover{border-color:var(--c2);color:var(--c2);}
+
+/* Contrôles manuels */
+.manual-controls{display:none;align-items:center;gap:8px;}
+.manual-controls.show{display:flex;}
+.btn-nav-q{background:#1e1b2e;border:2px solid var(--c2);border-radius:10px;padding:8px 18px;font-size:1.3rem;color:var(--c2);cursor:pointer;transition:all .15s;}
+.btn-nav-q:hover{background:rgba(77,150,255,.15);}
+.btn-nav-q:disabled{opacity:.3;cursor:not-allowed;}
+
+/* 4 PANELS — sans barres de progression */
+.levels-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;}
+.level-panel{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.04);overflow:hidden;padding:56px 14px 14px;}
+.level-panel::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,var(--col) 0%,transparent 70%);opacity:.05;top:-70px;left:-70px;pointer-events:none;}
+
+/* Badge "Niveau N" */
+.lbadge{position:absolute;top:9px;left:11px;background:rgba(0,0,0,.55);border:2px solid var(--col);border-radius:10px;padding:5px 16px;display:flex;align-items:center;gap:7px;}
+.lbadge-word{font-size:.8rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.lbadge-num{font-size:1.45rem;font-weight:900;color:var(--col);line-height:1;}
+
+.question-big{font-size:clamp(3rem,6.5vw,8.5rem);font-weight:600;color:var(--text);text-align:center;line-height:1.05;font-family:var(--font);}
+.question-big.flash-in{animation:qIn .25s ease;}
+@keyframes qIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+/* PAUSE */
+.pause-overlay{position:fixed;inset:0;z-index:200;background:rgba(9,8,15,.9);backdrop-filter:blur(10px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.pause-overlay.show{display:flex;}
+.pause-title{font-size:3rem;font-weight:900;color:var(--c3);}
+.pause-sub{font-size:1rem;font-weight:700;color:var(--muted);}
+.btn-resume{background:linear-gradient(135deg,var(--c2),#c77dff);border:none;border-radius:14px;padding:14px 44px;font-size:1.3rem;font-weight:900;color:#fff;cursor:pointer;transition:all .2s;font-family:var(--font);}
+.btn-resume:hover{transform:translateY(-3px);}
+
+/* ══ FIN ══ */
+#endscreen{position:fixed;inset:0;z-index:300;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;}
+.end-title{font-size:clamp(2rem,4vw,3.5rem);font-weight:900;background:linear-gradient(135deg,#ffd93d,#ff6b6b,#c77dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;}
+.end-sub{font-size:1rem;font-weight:700;color:var(--muted);text-align:center;}
+.end-btns-main{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.btn-end-big{display:flex;align-items:center;gap:10px;padding:18px 42px;border:none;border-radius:18px;font-size:1.7rem;font-weight:900;cursor:pointer;transition:all .22s;font-family:var(--font);}
+.btn-end-big.correction{background:linear-gradient(135deg,#ffd93d,#ff9f43);color:#1a1200;box-shadow:0 10px 36px rgba(255,217,61,.4);}
+.btn-end-big.correction:hover{transform:translateY(-4px) scale(1.02);}
+.btn-end-big.review{background:linear-gradient(135deg,var(--c2),#6ca0ff);color:#fff;box-shadow:0 10px 36px rgba(77,150,255,.35);}
+.btn-end-big.review:hover{transform:translateY(-4px) scale(1.02);}
+.btn-end-big svg{width:30px;height:30px;flex-shrink:0;}
+.end-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn-sm{padding:11px 24px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);font-size:.95rem;font-weight:800;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-sm:hover{color:var(--text);border-color:var(--muted);}
+
+/* Mode révision (depuis end screen) */
+#reviewMode{position:fixed;inset:0;z-index:350;display:none;flex-direction:column;}
+#reviewMode.show{display:flex;}
+.review-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(9,8,15,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);gap:12px;}
+.review-title{font-size:1.2rem;font-weight:900;color:var(--c2);}
+.review-qinfo{font-size:1.3rem;font-weight:800;color:var(--muted);}
+.review-qinfo strong{color:var(--text);font-size:1.5rem;}
+.review-btns{display:flex;gap:8px;align-items:center;}
+.btn-rev-nav{background:#1e1b2e;border:2px solid var(--c2);border-radius:10px;padding:8px 18px;font-size:1.3rem;color:var(--c2);cursor:pointer;transition:all .15s;}
+.btn-rev-nav:hover{background:rgba(77,150,255,.15);}
+.btn-rev-nav:disabled{opacity:.3;cursor:not-allowed;}
+.btn-rev-close{background:#1e1b2e;border:1.5px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.88rem;font-weight:800;color:var(--muted);cursor:pointer;font-family:var(--font);}
+.btn-rev-close:hover{color:var(--text);border-color:var(--muted);}
+.review-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;}
+.review-panel{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.04);overflow:hidden;padding:56px 14px 14px;}
+.review-panel::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,var(--col) 0%,transparent 70%);opacity:.05;top:-70px;left:-70px;pointer-events:none;}
+.review-q{font-size:clamp(2.5rem,5.5vw,7rem);font-weight:600;color:var(--text);text-align:center;line-height:1.05;font-family:var(--font);}
+.review-ans{font-size:clamp(1.8rem,3.5vw,4.5rem);font-weight:900;text-align:center;margin-top:12px;font-family:var(--font);}
+
+/* ══ CORRECTION ÉCRAN ══ */
+#correction{position:fixed;inset:0;z-index:400;background:var(--bg);display:none;flex-direction:column;overflow:hidden;}
+.corr-topbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 22px;background:rgba(9,8,15,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);gap:10px;flex-wrap:wrap;}
+.corr-title{font-size:1.7rem;font-weight:900;background:linear-gradient(90deg,#ffd93d,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+.corr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn-toggle{padding:8px 18px;border:2px solid var(--c3);border-radius:9px;background:rgba(255,217,61,.08);font-size:.95rem;font-weight:800;color:var(--c3);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-toggle:hover{background:rgba(255,217,61,.18);}
+.btn-toggle.revealed{background:var(--c3);color:#1a1200;}
+.btn-print{padding:8px 18px;border:2px solid var(--c2);border-radius:9px;background:rgba(77,150,255,.08);font-size:.95rem;font-weight:800;color:var(--c2);cursor:pointer;transition:all .15s;font-family:var(--font);display:flex;align-items:center;gap:6px;}
+.btn-print:hover{background:rgba(77,150,255,.18);}
+.btn-print svg{width:16px;height:16px;}
+.btn-nav{padding:8px 18px;border:1.5px solid var(--border);border-radius:9px;background:var(--surface);font-size:.95rem;font-weight:800;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-nav:hover{color:var(--text);border-color:var(--muted);}
+.btn-nav.accent{background:linear-gradient(135deg,var(--c2),#c77dff);border-color:transparent;color:#fff;}
+.btn-nav.accent:hover{transform:translateY(-1px);}
+
+.corr-cols{flex:1;display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;}
+.corr-col{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);overflow:hidden;}
+.corr-col:last-child{border-right:none;}
+.corr-col-header{flex-shrink:0;padding:13px 8px 11px;border-bottom:3px solid var(--col);background:rgba(0,0,0,.4);text-align:center;}
+.corr-col-level{font-size:1.9rem;font-weight:900;color:var(--col);display:block;line-height:1;}
+.corr-col-label{font-size:.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+
+/* Scroll sync — overflow hidden, scroll géré JS */
+.corr-list{flex:1;overflow-y:hidden;padding:3px 5px 12px;display:flex;flex-direction:column;gap:0;}
+.corr-item{display:flex;align-items:center;padding:7px 9px;gap:5px;border-radius:7px;}
+.corr-item.row-light{background:transparent;}
+/* Grisé + bordure 1 sur 4 */
+.corr-item.row-hl{background:rgba(255,255,255,.07);border-left:3px solid var(--col);padding-left:6px;}
+/* Espace tous les 3 calculs */
+.corr-item.row-gap{margin-top:8px;}
+
+.corr-num{font-size:1rem;font-weight:700;color:var(--col);opacity:.75;flex-shrink:0;width:26px;text-align:right;}
+/* q + sep + ans groupés et centrés ensemble */
+.corr-qgroup{display:flex;align-items:center;justify-content:center;flex:1;gap:4px;overflow:hidden;}
+.corr-q{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:600;color:var(--text);white-space:nowrap;font-family:var(--font);}
+.corr-sep{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:600;color:rgba(255,255,255,.22);}
+.corr-ans{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:800;color:var(--col);font-family:var(--font);transition:opacity .25s,filter .25s;}
+.corr-ans.masked{opacity:0;filter:blur(6px);background:rgba(255,255,255,.06);border-radius:7px;min-width:40px;display:inline-block;}
+
+/* ══ FICHE A4 paysage ══ */
+#printSheet{display:none;position:fixed;inset:0;z-index:500;background:#fff;color:#111;overflow:auto;font-family:Arial,sans-serif;}
+#printSheet.show{display:block;}
+.print-toolbar{display:flex;gap:8px;justify-content:center;padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;flex-wrap:wrap;}
+.print-toolbar button{padding:8px 20px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-do-print{background:#1a73e8;color:#fff;}
+.btn-close-print{background:#e0e0e0;color:#333;}
+
+/* A4 paysage — deux côtés A5 */
+.print-page{
+  width:297mm;min-height:210mm;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:148.5mm 148.5mm;
+}
+.print-side{padding:7mm 7mm 5mm;overflow:hidden;}
+.print-side.left{border-right:1.5px dashed #bbb;}
+.print-side-title{font-size:11pt;font-weight:900;text-align:center;margin-bottom:3mm;padding-bottom:2mm;border-bottom:2px solid #333;color:#111;}
+.print-side-sub{font-size:7pt;color:#666;text-align:center;margin-bottom:3mm;}
+
+/* 4 colonnes dans chaque côté */
+.print-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5mm;}
+.print-lv-title{font-size:7pt;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--col,#333);border-bottom:2px solid var(--col,#333);padding-bottom:.8mm;margin-bottom:1.5mm;white-space:nowrap;}
+
+/* Chaque calcul sur UNE seule ligne, lignes alignées gauche-droite */
+.print-item{
+  display:flex;align-items:baseline;
+  padding:1.4mm 1mm;   /* plus d'espace vertical */
+  font-size:9pt;
+  white-space:nowrap;
+  border-radius:1mm;
+  overflow:hidden;
+  height:6mm;          /* hauteur fixe pour alignement gauche/droite */
+  box-sizing:border-box;
+}
+.print-item.hl{background:#f3f3f3;}
+.print-item.gap-top{margin-top:2mm;}
+.print-num{font-weight:700;color:var(--col,#888);width:4.5mm;flex-shrink:0;text-align:right;font-size:7pt;margin-right:1mm;}
+.print-q{font-weight:600;flex-shrink:0;}
+.print-eq{margin:0 1.5mm;color:#777;}
+.print-ans{font-weight:900;flex-shrink:0;}
+.print-ans.blank{display:inline-block;width:12mm;border-bottom:1px solid #aaa;vertical-align:baseline;}
+
+@media print{
+  .print-toolbar{display:none;}
+  #printSheet{position:static;overflow:visible;background:#fff;}
+  body>*:not(#printSheet){display:none!important;}
+  .print-page{width:297mm;min-height:210mm;}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+
+<!-- ══════════ SETUP ══════════ -->
+<div id="setup">
+  <div class="setup-title">⚡ Calcul Mental &mdash; CM1 / CM2</div>
+
+  <div class="setup-card">
+    <div class="slabel">Opérations</div>
+    <div class="ops-row">
+      <button class="op-btn on" data-op="add"><span class="op-icon">＋</span><span class="op-name">Addition</span></button>
+      <button class="op-btn"    data-op="sub"><span class="op-icon">－</span><span class="op-name">Soustraction</span></button>
+      <button class="op-btn"    data-op="mul"><span class="op-icon">×</span><span class="op-name">Multiplication</span></button>
+      <button class="op-btn"    data-op="div"><span class="op-icon">÷</span><span class="op-name">Division</span></button>
+    </div>
+
+    <!-- SOUS-MENUS -->
+    <div class="select-hint" id="selectHint">↓&nbsp;&nbsp;Choisissez un type de calcul&nbsp;&nbsp;↓</div>
+    <div class="submenus visible" id="submenus">
+
+      <!-- ADDITION -->
+      <div class="sub-op-panel active" id="sub-add">
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★</span> Difficulté 1</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="add" data-type="0">Additionner 2 nombres &lt; 10</button>
+            <button class="calc-type-btn" data-op="add" data-type="1">Additionner 2 nombres multiples de 10 &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="2">Additionner un nombre &lt; 10 et un nombre &lt; 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★</span> Difficulté 2</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="add" data-type="3">Additionner 9 à un nombre à 2 chiffres</button>
+            <button class="calc-type-btn" data-op="add" data-type="4">Additionner 8 à un nombre à 2 chiffres</button>
+            <button class="calc-type-btn" data-op="add" data-type="5">Additionner 2 nombres se terminant par 0 ou 5 &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="6">Additionner un nombre décimal à une décimale &lt; 10 avec un nombre &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="7">Additionner 2 nombres décimaux à une décimale &lt; 10</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★</span> Difficulté 3</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="add" data-type="8">Additionner 2 nombres &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="9">Additionner un nombre décimal à une décimale &lt; 100 avec un nombre &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="10">Additionner 2 nombres décimaux à 2 décimales &lt; 10</button>
+            <button class="calc-type-btn" data-op="add" data-type="11">Additionner 2 nombres décimaux à une décimale &lt; 100</button>
+            <button class="calc-type-btn" data-op="add" data-type="12">Additionner 2 nombres se terminant par 0 ou 5 &lt; 1000</button>
+            <button class="calc-type-btn" data-op="add" data-type="13">Additionner 19 à un nombre à 2 ou 3 chiffres</button>
+            <button class="calc-type-btn" data-op="add" data-type="14">Additionner 18 à un nombre à 2 ou 3 chiffres</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★</span> Difficulté 4</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="add" data-type="15">Additionner un nombre &lt; 100 et un nombre &lt; 1000</button>
+            <button class="calc-type-btn" data-op="add" data-type="16">Additionner 2 nombres à 2 ou 3 chiffres avec un chiffre se terminant par 9</button>
+            <button class="calc-type-btn" data-op="add" data-type="17">Additionner 2 nombres à 2 ou 3 chiffres avec un chiffre se terminant par 8</button>
+            <button class="calc-type-btn" data-op="add" data-type="18">Additionner 2 nombres décimaux à 2 décimales &lt; 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★★</span> Difficulté 5</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="add" data-type="19">Additionner 2 nombres &lt; 1000</button>
+            <button class="calc-type-btn" data-op="add" data-type="20">Additionner 2 nombres entiers ou décimaux &lt; 1000</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOUSTRACTION -->
+      <div class="sub-op-panel" id="sub-sub">
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★</span> Difficulté 1</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="sub" data-type="0">Soustraire un nombre &lt; 10 à un nombre &lt; 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★</span> Difficulté 2</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="sub" data-type="1">Soustraire 9 à un nombre à 2 chiffres</button>
+            <button class="calc-type-btn" data-op="sub" data-type="2">Soustraire 8 à un nombre à 2 chiffres</button>
+            <button class="calc-type-btn" data-op="sub" data-type="3">Soustraire 2 nombres se terminant par 0 ou 5 &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="4">Soustraire un nombre &lt; 10 à un nombre à une décimale &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="5">Soustraire un nombre &lt; 10 à un nombre à 2 décimales &lt; 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★</span> Difficulté 3</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="sub" data-type="6">Soustraire 2 nombres &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="7">Soustraire 2 nombres se terminant par 0 ou 5 &lt; 1000</button>
+            <button class="calc-type-btn" data-op="sub" data-type="8">Soustraire 19 à un nombre à 2 ou 3 chiffres</button>
+            <button class="calc-type-btn" data-op="sub" data-type="9">Soustraire 18 à un nombre à 2 ou 3 chiffres</button>
+            <button class="calc-type-btn" data-op="sub" data-type="10">Soustraire un nombre &lt; 100 à un nombre à 1 ou 2 décimales &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="11">Soustraire 2 nombres à 1 décimale &lt; 10</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★</span> Difficulté 4</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="sub" data-type="12">Soustraire un nombre &lt; 100 à un nombre &lt; 1000</button>
+            <button class="calc-type-btn" data-op="sub" data-type="13">Soustraire un nombre &lt; 100 à un nombre à 1 ou 2 décimales &lt; 1000</button>
+            <button class="calc-type-btn" data-op="sub" data-type="14">Soustraire 2 nombres à 1 ou 2 décimales &lt; 10</button>
+            <button class="calc-type-btn" data-op="sub" data-type="15">Soustraire 2 nombres à 2 ou 3 chiffres avec un chiffre se terminant par 9</button>
+            <button class="calc-type-btn" data-op="sub" data-type="16">Soustraire 2 nombres à 2 ou 3 chiffres avec un chiffre se terminant par 8</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★★</span> Difficulté 5</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="sub" data-type="17">Soustraire 2 nombres &lt; 1000</button>
+            <button class="calc-type-btn" data-op="sub" data-type="18">Soustraire 2 nombres à 1 ou 2 décimales &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="19">Soustraire un nombre &lt; 1000 à un nombre à 1 ou 2 décimales &lt; 1000</button>
+            <button class="calc-type-btn" data-op="sub" data-type="20">Soustraire un nombre décimal à une décimale &lt; 100 avec un nombre &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="21">Soustraire 2 nombres décimaux à une décimale &lt; 10</button>
+            <button class="calc-type-btn" data-op="sub" data-type="22">Soustraire 2 nombres décimaux à 2 décimales &lt; 10</button>
+            <button class="calc-type-btn" data-op="sub" data-type="23">Soustraire 2 nombres décimaux à une décimale &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="24">Soustraire 2 nombres décimaux à 2 décimales &lt; 100</button>
+            <button class="calc-type-btn" data-op="sub" data-type="25">Soustraire 2 nombres entiers ou décimaux &lt; 1000</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTIPLICATION -->
+      <div class="sub-op-panel" id="sub-mul">
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★</span> Difficulté 1</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="mul" data-type="0">Tables de multiplication de 2 à 4</button>
+            <button class="calc-type-btn" data-op="mul" data-type="1">Multiplier un nombre &lt; 10 par 2</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★</span> Difficulté 2</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="mul" data-type="2">Tables de multiplication de 5 et 6</button>
+            <button class="calc-type-btn" data-op="mul" data-type="3">Tables de multiplication de 2 à 6</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★</span> Difficulté 3</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="mul" data-type="4">Tables de multiplication de 7 à 9</button>
+            <button class="calc-type-btn" data-op="mul" data-type="5">Tables de multiplication de 2 à 9</button>
+            <button class="calc-type-btn" data-op="mul" data-type="6">Multiplier un nombre &lt; 100 par 2</button>
+            <button class="calc-type-btn" data-op="mul" data-type="7">Multiplier un nombre &lt; 1000 par 10, 100 ou 1000</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★</span> Difficulté 4</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="mul" data-type="8">Multiplier un nombre &lt; 100 par 4</button>
+            <button class="calc-type-btn" data-op="mul" data-type="9">Multiplier un nombre &lt; 1000 par 2</button>
+            <button class="calc-type-btn" data-op="mul" data-type="10">Multiplier un nombre à 1, 2 ou 3 décimales &lt; 1000 par 10, 100 ou 1000</button>
+            <button class="calc-type-btn" data-op="mul" data-type="11">Multiplier un nombre &lt; 5 par un nombre &lt; 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★★</span> Difficulté 5</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="mul" data-type="12">Multiplier un nombre &lt; 10 par un nombre &lt; 100</button>
+            <button class="calc-type-btn" data-op="mul" data-type="13">Multiplier 2 nombres &lt; 100</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIVISION -->
+      <div class="sub-op-panel" id="sub-div">
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★</span> Difficulté 1</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="div" data-type="0">Diviser un nombre pair &lt; 30 par 2</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★</span> Difficulté 2</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="div" data-type="1">Diviser un nombre pair &lt; 100 par 2</button>
+            <button class="calc-type-btn" data-op="div" data-type="2">Diviser un nombre &lt; 100 par un nombre à 1 ou 2 chiffres, résultat entier</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★</span> Difficulté 3</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="div" data-type="3">Diviser un nombre pair &lt; 1000 par 2</button>
+            <button class="calc-type-btn" data-op="div" data-type="4">Diviser un nombre &lt; 100 par un nombre à 1 ou 2 chiffres, résultat avec reste éventuel</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★</span> Difficulté 4</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="div" data-type="5">Diviser un nombre &lt; 100 par 2, résultat décimal possible</button>
+            <button class="calc-type-btn" data-op="div" data-type="6">Diviser un nombre pair &lt; 1000 par 4, résultat entier</button>
+            <button class="calc-type-btn" data-op="div" data-type="7">Diviser un nombre &lt; 100 par 10 ou 100</button>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label"><span class="diff-stars">★★★★★</span> Difficulté 5</div>
+          <div class="calc-types-grid">
+            <button class="calc-type-btn" data-op="div" data-type="8">Diviser un nombre &lt; 1000 par 4, résultat décimal possible</button>
+            <button class="calc-type-btn" data-op="div" data-type="9">Diviser un nombre &lt; 1000 par un nombre à 2 ou 3 chiffres, résultat avec reste éventuel</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /submenus -->
+
+    <!-- TEMPS ET CALCULS SUR LA MÊME LIGNE -->
+    <div class="params-inline">
+      <div class="param-section">
+        <div class="slabel">⏱ Temps par calcul</div>
+        <div class="icon-picker" id="timePicker">
+          <button class="ico-btn" data-val="3">3<sub>sec</sub></button>
+          <button class="ico-btn" data-val="6">6<sub>sec</sub></button>
+          <button class="ico-btn" data-val="10">10<sub>sec</sub></button>
+          <button class="ico-btn" data-val="15">15<sub>sec</sub></button>
+          <button class="ico-btn on" data-val="20">20<sub>sec</sub></button>
+          <button class="ico-btn" data-val="25">25<sub>sec</sub></button>
+          <button class="ico-btn" data-val="30">30<sub>sec</sub></button>
+          <button class="ico-btn" data-val="35">35<sub>sec</sub></button>
+          <button class="ico-btn" data-val="40">40<sub>sec</sub></button>
+          <button class="ico-btn" data-val="45">45<sub>sec</sub></button>
+        </div>
+      </div>
+      <div class="param-section">
+        <div class="slabel">📋 Nombre de calculs</div>
+        <div class="icon-picker" id="countPicker">
+          <button class="ico-btn on" data-val="8">8</button>
+          <button class="ico-btn" data-val="12">12</button>
+          <button class="ico-btn" data-val="16">16</button>
+          <button class="ico-btn" data-val="20">20</button>
+          <button class="ico-btn" data-val="24">24</button>
+          <button class="ico-btn" data-val="32">32</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-go" id="btnGo" disabled>Lancer la séance 🚀</button>
+  </div>
+</div>
+
+<!-- ══════════ SESSION ══════════ -->
+<div id="session">
+  <div class="top-bar">
+    <div class="top-title">⚡ Calcul Mental CM</div>
+    <div class="top-qinfo">
+      <span class="op-word">Opération</span>&nbsp;<strong id="topQNum">1</strong>&nbsp;/&nbsp;<span id="topQTotal">8</span>
+    </div>
+    <div class="gtimer-ring">
+
+      <svg class="gtimer-svg" width="80" height="80" viewBox="0 0 80 80">
+        <circle class="gtrack" cx="40" cy="40" r="33"/>
+        <circle class="gbar" id="gBar" cx="40" cy="40" r="33"/>
+      </svg>
+      <div class="gtimer-num" id="gNum">20</div>
+    </div>
+    <div class="top-btns">
+      <!-- Mode manuel -->
+      <div class="manual-controls" id="manualControls">
+        <button class="btn-nav-q" id="btnPrev" disabled>◀</button>
+        <button class="btn-nav-q" id="btnNext">▶</button>
+      </div>
+      <button class="btn-top manual" id="btnManual" title="Mode manuel">⊞ Manuel</button>
+      <button class="btn-top pause" id="btnPause">⏸ Pause</button>
+      <button class="btn-top stop"  id="btnStop">⏹ Fin</button>
+    </div>
+  </div>
+  <div class="global-progress"><div class="global-progress-fill" id="globalProgressFill" style="width:0%"></div></div>
+  <div class="levels-grid" id="levelsGrid"></div>
+</div>
+
+<!-- PAUSE -->
+<div class="pause-overlay" id="pauseOverlay">
+  <div class="pause-title">⏸ Pause</div>
+  <div class="pause-sub">La séance est suspendue</div>
+  <button class="btn-resume" id="btnResume">▶ Reprendre</button>
+</div>
+
+<!-- ══════════ FIN ══════════ -->
+<div id="endscreen">
+  <div class="end-title">✅ Séance terminée !</div>
+  <div class="end-sub" id="endSub"></div>
+  <div class="end-btns-main">
+    <button class="btn-end-big correction" id="btnCorrection">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      Correction
+    </button>
+    <button class="btn-end-big review" id="btnReview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Revoir les calculs
+    </button>
+  </div>
+  <div class="end-row">
+    <button class="btn-sm" id="btnReplayEnd">🔄 Nouvelle session de calcul</button>
+    <button class="btn-sm" id="btnMenuEnd">⌂ Menu d'accueil</button>
+  </div>
+</div>
+
+<!-- ══════════ MODE RÉVISION ══════════ -->
+<div id="reviewMode">
+  <div class="review-bar">
+    <div class="review-title">🔍 Révision des calculs</div>
+    <div class="review-qinfo">Opération <strong id="revQNum">1</strong> / <span id="revQTotal">8</span></div>
+    <div class="review-btns">
+      <button class="btn-rev-toggle" id="btnRevToggle">🙈 Masquer les réponses</button>
+      <button class="btn-rev-nav" id="btnRevPrev" disabled>◀</button>
+      <button class="btn-rev-nav" id="btnRevNext">▶</button>
+      <button class="btn-rev-close" id="btnRevClose">✕ Fermer</button>
+    </div>
+  </div>
+  <div class="review-grid" id="reviewGrid"></div>
+</div>
+
+<!-- ══════════ CORRECTION ══════════ -->
+<div id="correction">
+  <div class="corr-topbar">
+    <div class="corr-title">📋 Correction</div>
+    <div class="corr-actions">
+      <button class="btn-toggle" id="btnToggle">🐵 Afficher les réponses</button>
+      <button class="btn-print" id="btnPrint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Fiche A4
+      </button>
+      <button class="btn-nav"        id="btnBackEnd">← Retour</button>
+      <button class="btn-nav accent" id="btnReplayCor">🔄 Nouvelle session de calcul</button>
+    </div>
+  </div>
+  <div class="corr-cols" id="corrCols"></div>
+</div>
+
+<!-- ══════════ FICHE PRINT ══════════ -->
+<div id="printSheet">
+  <div class="print-toolbar">
+    <button class="btn-do-print" onclick="window.print()">🖨️ Imprimer (A4 paysage)</button>
+    <button class="btn-close-print" id="btnClosePrint">✕ Fermer</button>
+  </div>
+  <div class="print-page" id="printPage"></div>
+</div>
+
+<script>
+/* ════ STARS ════ */
+(function(){
+  var c=document.getElementById('stars');
+  for(var i=0;i<55;i++){
+    var s=document.createElement('div');s.className='star';
+    s.style.left=Math.random()*100+'vw';s.style.top=Math.random()*100+'vh';
+    s.style.setProperty('--d',(2+Math.random()*4)+'s');
+    s.style.setProperty('--dl',(Math.random()*4)+'s');
+    c.appendChild(s);
+  }
+})();
+
+/* ════ AUDIO ════ */
+var actx;
+function ensureAudio(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();}
+function beep(f,d,t,v){t=t||'sine';v=v||.3;ensureAudio();
+  var o=actx.createOscillator(),g=actx.createGain();
+  o.connect(g);g.connect(actx.destination);o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(v,actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);
+  o.start();o.stop(actx.currentTime+d);}
+function bipNewQ(){beep(880,.07,'sine',.32);setTimeout(function(){beep(1100,.1,'sine',.28);},85);}
+
+/* ════ UTILITAIRES ════ */
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function rnd1(x){return Math.round(x*10)/10;}
+function rnd2(x){return Math.round(x*100)/100;}
+function fmt(x){
+  if(Number.isInteger(x))return String(x);
+  return String(Math.round(x*1000)/1000).replace('.',',');
+}
+function pick(arr){return arr[rand(0,arr.length-1)];}
+
+/* ════ NIVEAUX ════ */
+var LEVELS=[
+  {n:1,label:'Niveau 1',col:'var(--c1)',hex:'#6bcb77',printCol:'#217a32'},
+  {n:2,label:'Niveau 2',col:'var(--c2)',hex:'#4d96ff',printCol:'#1a4fa0'},
+  {n:3,label:'Niveau 3',col:'var(--c3)',hex:'#ffd93d',printCol:'#a07800'},
+  {n:4,label:'Niveau 4',col:'var(--c4)',hex:'#ff6b6b',printCol:'#a03030'},
+];
+var OP_LBL={add:'Addition',sub:'Soustraction',mul:'Multiplication',div:'Division'};
+
+/* ════ GÉNÉRATEURS ════
+   Niveaux : 1=CE2  2=CM1  3=CM2  4=6ème
+   Chaque palier est clairement distinct.
+════ */
+var GENERATORS={
+
+  add:[
+    /* 0 — 2 nb < 10 */
+    function(lv){
+      // CE2:1-5+1-5 | CM1:1-7+1-7 | CM2:2-8+2-8 | 6e:3-9+3-9
+      var lo=[1,1,2,3],hi=[5,7,8,9];
+      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 1 — 2 multiples de 10 < 100 */
+    function(lv){
+      // CE2:10-30 | CM1:10-50 | CM2:10-70 | 6e:10-90
+      var hi=[3,5,7,9];
+      var a=rand(1,hi[lv-1])*10,b=rand(1,hi[lv-1])*10;
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 2 — nb<10 + nb<100 */
+    function(lv){
+      // CE2:+nb10-20 | CM1:+nb10-50 | CM2:+nb20-80 | 6e:+nb30-99
+      var blo=[10,10,20,30],bhi=[20,50,80,99];
+      var a=rand(1,9),b=rand(blo[lv-1],bhi[lv-1]);
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 3 — +9 à nb 2 chiffres */
+    function(lv){
+      // CE2:10-29 | CM1:20-49 | CM2:30-69 | 6e:50-89
+      var lo=[10,20,30,50],hi=[29,49,69,89];
+      var b=rand(lo[lv-1],hi[lv-1]);
+      return{q:'9 + '+b,ans:9+b};
+    },
+    /* 4 — +8 à nb 2 chiffres */
+    function(lv){
+      var lo=[10,20,30,50],hi=[29,49,69,89];
+      var b=rand(lo[lv-1],hi[lv-1]);
+      return{q:'8 + '+b,ans:8+b};
+    },
+    /* 5 — 2 nb multiples 0 ou 5 < 100 */
+    function(lv){
+      // CE2: max 30 | CM1: max 50 | CM2: max 70 | 6e: max 95
+      var hi=[30,50,70,95];
+      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
+      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 6 — déc 1 déc < 10 + nb < 100 */
+    function(lv){
+      // CE2:déc<3 b<30 | CM1:déc<5 b<50 | CM2:déc<8 b<80 | 6e:déc<10 b<99
+      var dm=[2.9,4.9,7.9,9.9],bm=[30,50,80,99];
+      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      var b=rand(10,bm[lv-1]);
+      return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
+    },
+    /* 7 — 2 déc 1 déc < 10 */
+    function(lv){
+      var dm=[2.9,4.9,7.9,9.9];
+      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+    },
+    /* 8 — 2 nb < 100 */
+    function(lv){
+      // CE2:5-20 | CM1:10-50 | CM2:20-80 | 6e:30-99
+      var lo=[5,10,20,30],hi=[20,50,80,99];
+      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 9 — déc 1 déc < 100 + nb < 100 */
+    function(lv){
+      var dm=[9.9,29.9,59.9,99.9],bm=[20,50,80,99];
+      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      var b=rand(10,bm[lv-1]);
+      return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
+    },
+    /* 10 — 2 déc 2 déc < 10 */
+    function(lv){
+      var dm=[1.99,3.99,6.99,9.99];
+      var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
+      var b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
+      return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
+    },
+    /* 11 — 2 déc 1 déc < 100 */
+    function(lv){
+      var dm=[9.9,29.9,59.9,99.9];
+      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+    },
+    /* 12 — 2 nb multiples 0 ou 5 < 1000 */
+    function(lv){
+      var hi=[100,300,600,995];
+      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
+      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 13 — +19 à nb 2 ou 3 chiffres */
+    function(lv){
+      var lo=[10,20,50,100],hi=[50,120,300,800];
+      var b=rand(lo[lv-1],hi[lv-1]);
+      return{q:'19 + '+b,ans:19+b};
+    },
+    /* 14 — +18 à nb 2 ou 3 chiffres */
+    function(lv){
+      var lo=[10,20,50,100],hi=[50,120,300,800];
+      var b=rand(lo[lv-1],hi[lv-1]);
+      return{q:'18 + '+b,ans:18+b};
+    },
+    /* 15 — nb<100 + nb<1000 */
+    function(lv){
+      var am=[20,50,80,99],bm=[150,350,600,999];
+      var a=rand(10,am[lv-1]),b=rand(100,bm[lv-1]);
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 16 — se terminant par 9 */
+    function(lv){
+      var hi=[4,9,19,49]; // valeur × 10 - 1
+      var a=(rand(1,hi[lv-1]))*10-1;
+      var b=(rand(1,hi[lv-1]))*10-1;
+      if(a<9)a=9;if(b<9)b=9;
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 17 — se terminant par 8 */
+    function(lv){
+      var hi=[4,9,19,49];
+      var a=(rand(1,hi[lv-1]))*10-2;
+      var b=(rand(1,hi[lv-1]))*10-2;
+      if(a<8)a=8;if(b<8)b=8;
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 18 — 2 déc 2 déc < 100 */
+    function(lv){
+      var dm=[9.99,29.99,59.99,99.99];
+      var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
+      var b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
+      return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
+    },
+    /* 19 — 2 nb < 1000 */
+    function(lv){
+      var lo=[100,150,200,400],hi=[250,400,600,999];
+      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
+      return{q:a+' + '+b,ans:a+b};
+    },
+    /* 20 — 2 nb entiers ou décimaux < 1000 */
+    function(lv){
+      var mx=[150,300,600,999];
+      function mk(m){return (lv>=3&&Math.random()<.5)?rnd1(rand(10,m*10)/10):rand(1,m);}
+      var a=mk(mx[lv-1]),b=mk(mx[lv-1]);
+      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+    },
+  ],
+
+  sub:[
+    /* 0 */ function(lv){
+      var bhi=[30,60,80,99];
+      var b=rand(12,bhi[lv-1]);
+      var a=rand(1,Math.min(9,b-2));
+      return{q:b+' \u2212 '+a,ans:b-a};
+    },
+    /* 1 */ function(lv){var lo=[13,20,30,50],hi=[30,55,75,90];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 9',ans:b-9};},
+    /* 2 */ function(lv){var lo=[12,20,30,50],hi=[30,55,75,90];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 8',ans:b-8};},
+    /* 3 */ function(lv){
+      var hi=[30,50,70,95];
+      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
+      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
+      if(b>a){var t=a;a=b;b=t;}
+      return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 4 */ function(lv){
+      var bm=[9.9,19.9,39.9,79.9];
+      var b=rnd1(rand(20,Math.round(bm[lv-1]*10))/10);
+      var a=rand(1,9);
+      return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};
+    },
+    /* 5 */ function(lv){
+      var bm=[5.99,9.99,19.99,49.99];
+      var b=rnd2(rand(200,Math.round(bm[lv-1]*100))/100);
+      var a=rand(1,Math.min(4,Math.floor(b)-1));
+      return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
+    },
+    /* 6 */ function(lv){
+      var lo=[15,20,30,50],hi=[35,65,85,99];
+      var a=rand(lo[lv-1],hi[lv-1]),b=rand(1,a-5);
+      return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 7 */ function(lv){
+      var hi=[150,300,600,995];
+      var a=rand(2,Math.floor(hi[lv-1]/5))*5;
+      var b=rand(1,Math.floor(a/5)-1)*5;
+      return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 8 */ function(lv){var lo=[25,35,55,120];var hi=[60,180,450,800];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 19',ans:b-19};},
+    /* 9 */ function(lv){var lo=[25,35,55,120];var hi=[60,180,450,800];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 18',ans:b-18};},
+    /* 10 */ function(lv){
+      var bm=[9.9,19.9,49.9,99.9];var dec=(lv>=3)?2:1;
+      var b=(dec===1)?rnd1(rand(100,Math.round(bm[lv-1]*10))/10):rnd2(rand(1000,Math.round(bm[lv-1]*100))/100);
+      var a=rand(1,Math.min(50,Math.floor(b)-1));
+      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
+    },
+    /* 11 */ function(lv){
+      var dm=[1.9,3.9,6.9,9.9];
+      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
+      if(b>a){var t=a;a=b;b=t;}
+      return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};
+    },
+    /* 12 */ function(lv){var bm=[200,400,650,999];var b=rand(110,bm[lv-1]);var a=rand(10,Math.min(99,b-10));return{q:b+' \u2212 '+a,ans:b-a};},
+    /* 13 */ function(lv){
+      var bm=[99.9,199.9,499.9,999.9];var dec=(lv>=3)?2:1;
+      var b=(dec===1)?rnd1(rand(1000,Math.round(bm[lv-1]*10))/10):rnd2(rand(10000,Math.round(bm[lv-1]*100))/100);
+      var a=rand(5,99);
+      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
+    },
+    /* 14 */ function(lv){
+      var dec=(lv>=3)?2:1;var dm=[1.9,3.9,5.99,9.99];
+      var a,b;
+      if(dec===1){a=rnd1(rand(20,Math.round(dm[lv-1]*10))/10);b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);}
+      else{a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);}
+      if(b>a){var t=a;a=b;b=t;}
+      return{q:fmt(a)+' \u2212 '+fmt(b),ans:dec===1?rnd1(a-b):rnd2(a-b)};
+    },
+    /* 15 */ function(lv){
+      var hi=[3,8,18,48];
+      var a=rand(2,hi[lv-1])*10-1;var b=rand(1,Math.floor(hi[lv-1]/2))*10-1;
+      if(b>=a)b=a-10;if(b<9)b=9;
+      return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 16 */ function(lv){
+      var hi=[3,8,18,48];
+      var a=rand(2,hi[lv-1])*10-2;var b=rand(1,Math.floor(hi[lv-1]/2))*10-2;
+      if(b>=a)b=a-10;if(b<8)b=8;
+      return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 17 */ function(lv){var lo=[100,150,250,500];var hi=[250,450,700,999];var a=rand(lo[lv-1],hi[lv-1]);var b=rand(10,a-10);return{q:a+' \u2212 '+b,ans:a-b};},
+    /* 18 */ function(lv){
+      var dec=(lv>=3)?2:1;var dm=[4.9,14.9,39.9,79.9];
+      var a,b;
+      if(dec===1){a=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);b=rnd1(rand(10,Math.round(dm[lv-1]*10/2))/10);}
+      else{a=rnd2(rand(500,Math.round(dm[lv-1]*100))/100);b=rnd2(rand(100,Math.round(dm[lv-1]*100/2))/100);}
+      if(b>a){var t=a;a=b;b=t;}
+      return{q:fmt(a)+' \u2212 '+fmt(b),ans:dec===1?rnd1(a-b):rnd2(a-b)};
+    },
+    /* 19 */ function(lv){
+      var bm=[149.9,299.9,599.9,999.9];var dec=(lv>=3)?2:1;
+      var b=(dec===1)?rnd1(rand(1000,Math.round(bm[lv-1]*10))/10):rnd2(rand(10000,Math.round(bm[lv-1]*100))/100);
+      var a=rand(1,Math.min(500,Math.floor(b)-5));
+      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
+    },
+    /* 20 */ function(lv){
+      var dm=[4.9,14.9,39.9,79.9];
+      var b=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);
+      var a=rnd1(rand(10,Math.round(b*10)-1)/10);
+      return{q:fmt(b)+' \u2212 '+fmt(a),ans:rnd1(b-a)};
+    },
+    /* 21 */ function(lv){var dm=[1.9,3.9,6.9,9.9];var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);var b=rnd1(rand(5,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
+    /* 22 */ function(lv){var dm=[1.99,3.99,6.99,9.99];var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);var b=rnd2(rand(50,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
+    /* 23 */ function(lv){var dm=[4.9,14.9,39.9,79.9];var a=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);var b=rnd1(rand(10,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
+    /* 24 */ function(lv){var dm=[4.99,14.99,39.99,79.99];var a=rnd2(rand(500,Math.round(dm[lv-1]*100))/100);var b=rnd2(rand(100,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
+    /* 25 */ function(lv){
+      var mx=[150,350,600,999];
+      function mk(m){return(lv>=3&&Math.random()<.45)?rnd1(rand(10,m*10)/10):rand(1,m);}
+      var a=mk(mx[lv-1]),b=mk(mx[lv-1]);
+      if(b>a){var t=a;a=b;b=t;}
+      return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};
+    },
+  ],
+
+  mul:[
+    /* 0 — tables 2 à 4 */
+    function(lv){
+      // CE2:t2-3 b1-6 | CM1:t2-4 b1-8 | CM2:t2-4 b1-10 | 6e:t2-4 b5-12
+      var tMax=[3,4,4,4],blo=[1,1,1,5],bhi=[6,8,10,12];
+      var t=rand(2,tMax[lv-1]),b=rand(blo[lv-1],bhi[lv-1]);
+      return{q:t+' \u00d7 '+b,ans:t*b};
+    },
+    /* 1 — nb<10 × 2 */
+    function(lv){
+      var hi=[5,7,8,9];var a=rand(2,hi[lv-1]);
+      return{q:a+' \u00d7 2',ans:a*2};
+    },
+    /* 2 — tables 5 et 6 */
+    function(lv){
+      var bhi=[6,8,10,12];var t=pick([5,6]);var b=rand(2,bhi[lv-1]);
+      return{q:t+' \u00d7 '+b,ans:t*b};
+    },
+    /* 3 — tables 2 à 6 */
+    function(lv){var bhi=[6,8,10,12];var t=rand(2,6);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
+    /* 4 — tables 7 à 9 */
+    function(lv){var bhi=[5,8,10,12];var t=rand(7,9);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
+    /* 5 — tables 2 à 9 */
+    function(lv){var bhi=[6,8,10,12];var t=rand(2,9);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
+    /* 6 — nb<100 × 2 */
+    function(lv){var lo=[5,15,30,50],hi=[15,35,65,99];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 2',ans:a*2};},
+    /* 7 — nb<1000 × 10/100/1000 */
+    function(lv){
+      var facts=[[10],[10],[10,100],[10,100,1000]];
+      var f=pick(facts[lv-1]);
+      var hi=[15,50,200,999];var a=rand(2,hi[lv-1]);
+      return{q:a+' \u00d7 '+f,ans:a*f};
+    },
+    /* 8 — nb<100 × 4 */
+    function(lv){var lo=[3,8,15,25],hi=[8,20,40,99];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 4',ans:a*4};},
+    /* 9 — nb<1000 × 2 */
+    function(lv){var lo=[20,50,100,250],hi=[60,150,400,999];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 2',ans:a*2};},
+    /* 10 — nb déc × 10/100/1000 */
+    function(lv){
+      var facts=[[10],[10,100],[100],[100,1000]];
+      var f=pick(facts[lv-1]);
+      var dp=(lv===1)?1:(lv===2)?1:(lv===3)?2:3;
+      var a=Math.round(rand(1,99)*Math.pow(10,-dp)*1000)/1000;
+      return{q:fmt(a)+' \u00d7 '+f,ans:rnd2(a*f)};
+    },
+    /* 11 — nb<5 × nb<100 */
+    function(lv){var bm=[15,30,60,99];var a=rand(2,4);var b=rand(5,bm[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
+    /* 12 — nb<10 × nb<100 */
+    function(lv){var am=[4,6,8,9],bm=[15,30,60,99];var a=rand(2,am[lv-1]);var b=rand(10,bm[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
+    /* 13 — 2 nb<100 */
+    function(lv){var lo=[10,12,15,20],hi=[14,20,40,99];var a=rand(lo[lv-1],hi[lv-1]);var b=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
+  ],
+
+  div:[
+    /* 0 — nb pair < 30 ÷ 2 */
+    function(lv){var hi=[8,12,16,28];var a=rand(1,hi[lv-1])*2;return{q:a+' \u00f7 2',ans:a/2};},
+    /* 1 — nb pair < 100 ÷ 2 */
+    function(lv){var hi=[20,40,70,98];var a=rand(2,Math.floor(hi[lv-1]/2))*2;return{q:a+' \u00f7 2',ans:a/2};},
+    /* 2 — nb<100 ÷ 1-2 chiffres, résultat entier */
+    function(lv){
+      var dm=[4,6,9,15],qm=[5,10,15,20];
+      var d=rand(2,dm[lv-1]);var q=rand(2,qm[lv-1]);
+      return{q:(d*q)+' \u00f7 '+d,ans:q};
+    },
+    /* 3 — nb pair < 1000 ÷ 2 */
+    function(lv){var hi=[100,250,500,998];var a=rand(1,Math.floor(hi[lv-1]/2))*2;return{q:a+' \u00f7 2',ans:a/2};},
+    /* 4 — nb<100 ÷ 1-2 chiffres, reste éventuel */
+    function(lv){
+      var dm=[5,8,12,20],am=[30,60,80,99];
+      var d=rand(2,dm[lv-1]);var a=rand(d+1,am[lv-1]);
+      var q=Math.floor(a/d);var r=a%d;
+      return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};
+    },
+    /* 5 — nb<100 ÷ 2, résultat déc possible */
+    function(lv){var hi=[20,45,75,99];var a=rand(3,hi[lv-1]);return{q:a+' \u00f7 2',ans:fmt(a/2)};},
+    /* 6 — nb pair < 1000 ÷ 4, résultat entier */
+    function(lv){var qm=[10,30,80,200];var q=rand(2,qm[lv-1]);return{q:(q*4)+' \u00f7 4',ans:q};},
+    /* 7 — nb<100 ÷ 10 ou 100 */
+    function(lv){
+      var facts=[[10],[10],[10,100],[10,100]];
+      var f=pick(facts[lv-1]);var a=rand(1,99);
+      return{q:a+' \u00f7 '+f,ans:fmt(a/f)};
+    },
+    /* 8 — nb<1000 ÷ 4, résultat déc possible */
+    function(lv){var hi=[100,250,600,999];var a=rand(2,hi[lv-1]);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};},
+    /* 9 — nb<1000 ÷ nb 2-3 chiffres, reste */
+    function(lv){
+      var dr=[[10,20],[10,30],[20,80],[50,200]];
+      var r=dr[lv-1];var d=rand(r[0],r[1]);
+      var am=[200,400,700,999];var a=rand(d+1,am[lv-1]);
+      var q=Math.floor(a/d);var re=a%d;
+      return{q:a+' \u00f7 '+d,ans:re===0?String(q):q+' R'+re};
+    },
+  ],
+};
+
+/* ════ ÉTAT ════ */
+var cfg={op:'add',type:null,timePerQ:20,totalQ:8};
+var sess={questions:[],qIndex:0,timer:null,paused:false,timeLeft:0,history:[],manual:false};
+var revealed=false;
+var revIndex=0;
+
+/* ════ SETUP UI ════ */
+document.querySelectorAll('.op-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.op-btn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');cfg.op=b.dataset.op;cfg.type=null;
+    document.querySelectorAll('.sub-op-panel').forEach(function(p){p.classList.remove('active');});
+    document.getElementById('sub-'+cfg.op).classList.add('active');
+    document.querySelectorAll('.calc-type-btn').forEach(function(x){x.classList.remove('selected');});
+    document.getElementById('selectHint').textContent='\u2193\u00a0\u00a0Choisissez un type de calcul\u00a0\u00a0\u2193';
+    document.getElementById('btnGo').disabled=true;
+  });
+});
+
+document.querySelectorAll('.calc-type-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.calc-type-btn[data-op="'+b.dataset.op+'"]').forEach(function(x){x.classList.remove('selected');});
+    b.classList.add('selected');
+    cfg.type=parseInt(b.dataset.type,10);
+    document.getElementById('selectHint').textContent='';
+    document.getElementById('btnGo').disabled=false;
+  });
+});
+
+/* Icônes temps */
+document.querySelectorAll('#timePicker .ico-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#timePicker .ico-btn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');cfg.timePerQ=parseInt(b.dataset.val,10);
+  });
+});
+
+/* Icônes nb calculs */
+document.querySelectorAll('#countPicker .ico-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#countPicker .ico-btn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');cfg.totalQ=parseInt(b.dataset.val,10);
+  });
+});
+
+document.getElementById('btnGo').addEventListener('click',function(){
+  ensureAudio();startSession();
+});
+
+/* ════ GÉNÉRATION ════ */
+function genQ(level){
+  try{return GENERATORS[cfg.op][cfg.type](level);}
+  catch(e){return{q:'?',ans:'?'};}
+}
+
+/* ════ BUILD PANELS ════ */
+function buildPanels(gridId,showAns){
+  var g=document.getElementById(gridId);g.innerHTML='';
+  LEVELS.forEach(function(lv){
+    var p=document.createElement('div');
+    p.className=(gridId==='levelsGrid'?'level-panel':'review-panel');
+    p.id=(gridId==='levelsGrid'?'panel-':'rpanel-')+lv.n;
+    p.style.setProperty('--col',lv.col);
+    var inner='<div class="lbadge"><span class="lbadge-word">Niveau</span><span class="lbadge-num">'+lv.n+'</span></div>';
+    if(gridId==='levelsGrid'){
+      inner+='<div class="question-big" id="qBig-'+lv.n+'">—</div>';
+    }else{
+      inner+='<div class="review-q" id="rq-'+lv.n+'">—</div>';
+      inner+='<div class="review-ans" id="rans-'+lv.n+'" style="color:'+lv.hex+'">—</div>';
+    }
+    p.innerHTML=inner;
+    g.appendChild(p);
+  });
+}
+
+/* ════ TIMER ════ */
+var G_CIRC=2*Math.PI*33;
+document.getElementById('gBar').style.strokeDasharray=G_CIRC;
+function setGRing(frac,t){
+  var b=document.getElementById('gBar');
+  b.style.strokeDashoffset=G_CIRC*(1-frac);
+  b.style.stroke=frac>.5?'#4d96ff':frac>.25?'#ffd93d':'#ff6b6b';
+  var n=document.getElementById('gNum');
+  n.textContent=t;n.style.color=frac<=.25?'#ff6b6b':'var(--text)';
+}
+function updateProgress(){
+  var pct=Math.min(100,((sess.qIndex+1)/cfg.totalQ)*100);
+  document.getElementById('globalProgressFill').style.width=pct+'%';
+}
+
+/* ════ SESSION ════ */
+function startSession(){
+  sess.questions=LEVELS.map(function(lv){
+    var arr=[];for(var i=0;i<cfg.totalQ;i++)arr.push(genQ(lv.n));return arr;
+  });
+  sess.qIndex=0;sess.paused=false;sess.manual=false;
+  sess.history=LEVELS.map(function(){return[];});
+  buildPanels('levelsGrid',false);
+  ['setup','endscreen','correction','printSheet','reviewMode'].forEach(hideEl);
+  document.getElementById('pauseOverlay').classList.remove('show');
+  document.getElementById('manualControls').classList.remove('show');
+  document.getElementById('btnManual').classList.remove('active');
+  document.getElementById('btnManual').textContent='⊞ Manuel';
+  showEl('session');
+  document.getElementById('topQTotal').textContent=cfg.totalQ;
+  updateProgress();
+  loadQ();
+}
+
+function loadQ(){
+  if(sess.qIndex>=cfg.totalQ){endSession();return;}
+  document.getElementById('topQNum').textContent=sess.qIndex+1;
+  updateProgress();
+  LEVELS.forEach(function(lv){
+    var q=sess.questions[lv.n-1][sess.qIndex];
+    var el=document.getElementById('qBig-'+lv.n);
+    el.textContent=q.q;
+    el.classList.remove('flash-in');void el.offsetWidth;el.classList.add('flash-in');
+  });
+  setGRing(1,cfg.timePerQ);
+  bipNewQ();
+  if(!sess.manual)startTimer();
+  else{clearInterval(sess.timer);setGRing(1,cfg.timePerQ);}
+  // update nav btns
+  document.getElementById('btnPrev').disabled=(sess.qIndex===0);
+  document.getElementById('btnNext').disabled=(sess.qIndex>=cfg.totalQ-1);
+}
+
+function startTimer(){
+  clearInterval(sess.timer);
+  sess.timeLeft=cfg.timePerQ;
+  sess.timer=setInterval(function(){
+    if(sess.paused||sess.manual)return;
+    sess.timeLeft--;
+    setGRing(sess.timeLeft/cfg.timePerQ,sess.timeLeft);
+    if(sess.timeLeft<=0){
+      clearInterval(sess.timer);
+      recordQ();
+      setTimeout(function(){sess.qIndex++;loadQ();},600);
+    }
+  },1000);
+}
+
+function recordQ(){
+  LEVELS.forEach(function(lv,i){
+    if(sess.history[i].length<=sess.qIndex){
+      var q=sess.questions[i][sess.qIndex];
+      sess.history[i].push({q:q.q,ans:q.ans});
+    }
+  });
+}
+
+/* ════ MODE MANUEL ════ */
+document.getElementById('btnManual').addEventListener('click',function(){
+  sess.manual=!sess.manual;
+  this.classList.toggle('active',sess.manual);
+  this.textContent=sess.manual?'⊠ Sortir du mode Manuel':'⊞ Manuel';
+  document.getElementById('manualControls').classList.toggle('show',sess.manual);
+  if(sess.manual){clearInterval(sess.timer);setGRing(1,cfg.timePerQ);}
+  else{startTimer();}
+});
+
+document.getElementById('btnPrev').addEventListener('click',function(){
+  if(sess.qIndex>0){sess.qIndex--;loadQ();}
+});
+document.getElementById('btnNext').addEventListener('click',function(){
+  recordQ();
+  if(sess.qIndex<cfg.totalQ-1){sess.qIndex++;loadQ();}
+  else{endSession();}
+});
+
+/* PAUSE */
+document.getElementById('btnPause').addEventListener('click',function(){
+  sess.paused=!sess.paused;
+  document.getElementById('pauseOverlay').classList.toggle('show',sess.paused);
+  this.textContent=sess.paused?'▶ Reprendre':'⏸ Pause';
+});
+document.getElementById('btnResume').addEventListener('click',function(){
+  sess.paused=false;
+  document.getElementById('pauseOverlay').classList.remove('show');
+  document.getElementById('btnPause').textContent='⏸ Pause';
+});
+document.getElementById('btnStop').addEventListener('click',function(){clearInterval(sess.timer);endSession();});
+
+function endSession(){
+  clearInterval(sess.timer);
+  // compléter l'historique si arrêt prématuré
+  for(var i=sess.qIndex;i<cfg.totalQ;i++){
+    LEVELS.forEach(function(lv,li){
+      if(sess.history[li].length<=i){
+        var q=sess.questions[li][i];
+        sess.history[li].push({q:q.q,ans:q.ans});
+      }
+    });
+  }
+  document.getElementById('globalProgressFill').style.width='100%';
+  hideEl('session');
+  document.getElementById('endSub').textContent=cfg.totalQ+' opérations \u00b7 '+OP_LBL[cfg.op];
+  showEl('endscreen');
+}
+
+/* ════ MODE RÉVISION (depuis fin) ════ */
+var revAnswersVisible=true;
+document.getElementById('btnReview').addEventListener('click',function(){
+  revIndex=0;
+  revAnswersVisible=false;   /* réponses masquées par défaut */
+  buildPanels('reviewGrid',true);
+  hideEl('endscreen');
+  showRevQ();
+  var tb=document.getElementById('btnRevToggle');
+  tb.textContent='🐵 Afficher les réponses';
+  tb.classList.remove('hidden-ans');
+  document.getElementById('reviewMode').classList.add('show');
+});
+document.getElementById('btnRevClose').addEventListener('click',function(){
+  document.getElementById('reviewMode').classList.remove('show');
+  showEl('endscreen');
+});
+document.getElementById('btnRevToggle').addEventListener('click',function(){
+  revAnswersVisible=!revAnswersVisible;
+  document.querySelectorAll('.review-ans').forEach(function(el){
+    el.style.visibility=revAnswersVisible?'visible':'hidden';
+  });
+  /* 🐵 yeux ouverts quand masqué, 🙈 mains sur yeux quand affiché */
+  this.textContent=revAnswersVisible?'🙈 Masquer les réponses':'🐵 Afficher les réponses';
+  this.classList.toggle('hidden-ans',revAnswersVisible);
+});
+document.getElementById('btnRevPrev').addEventListener('click',function(){if(revIndex>0){revIndex--;showRevQ();}});
+document.getElementById('btnRevNext').addEventListener('click',function(){if(revIndex<cfg.totalQ-1){revIndex++;showRevQ();}});
+
+function showRevQ(){
+  document.getElementById('revQNum').textContent=revIndex+1;
+  document.getElementById('revQTotal').textContent=cfg.totalQ;
+  LEVELS.forEach(function(lv,i){
+    var h=sess.history[i][revIndex];
+    document.getElementById('rq-'+lv.n).textContent=h?h.q:'—';
+    var ansEl=document.getElementById('rans-'+lv.n);
+    ansEl.textContent=h?'= '+h.ans:'';
+    ansEl.style.visibility=revAnswersVisible?'visible':'hidden';
+  });
+  document.getElementById('btnRevPrev').disabled=(revIndex===0);
+  document.getElementById('btnRevNext').disabled=(revIndex>=cfg.totalQ-1);
+}
+
+/* ════ CORRECTION ════ */
+document.getElementById('btnCorrection').addEventListener('click',showCorrection);
+
+function showCorrection(){
+  revealed=false;
+  var btn=document.getElementById('btnToggle');
+  btn.textContent='🐵 Afficher les réponses';btn.classList.remove('revealed');
+  var cols=document.getElementById('corrCols');cols.innerHTML='';
+
+  LEVELS.forEach(function(lv,i){
+    var col=document.createElement('div');
+    col.className='corr-col';col.style.setProperty('--col',lv.col);
+    var hist=sess.history[i];
+    /* Grisé 1 sur 4 (idx 0,4,8…) + espace tous les 3 */
+    var items=hist.map(function(h,idx){
+      var hl=(idx%4===0)?'corr-item row-hl':'corr-item row-light';
+      var gap=(idx>0&&idx%3===0)?' row-gap':'';
+      return '<div class="'+hl+gap+'">'+
+        '<span class="corr-num">'+(idx+1)+'</span>'+
+        '<span class="corr-qgroup">'+
+          '<span class="corr-q">'+h.q+'</span>'+
+          '<span class="corr-sep">=</span>'+
+          '<span class="corr-ans masked">'+h.ans+'</span>'+
+        '</span>'+
+      '</div>';
+    }).join('');
+    if(!items)items='<div class="corr-item row-light"><span class="corr-q" style="color:var(--muted)">—</span></div>';
+
+    col.innerHTML=
+      '<div class="corr-col-header">'+
+        '<span class="corr-col-level">'+lv.n+'</span>'+
+        '<span class="corr-col-label">Niveau '+lv.n+'</span>'+
+      '</div>'+
+      '<div class="corr-list" id="clist-'+lv.n+'">'+items+'</div>';
+    cols.appendChild(col);
+  });
+
+  /* Scroll synchronisé */
+  var lists=document.querySelectorAll('.corr-list');
+  lists.forEach(function(lst){
+    lst.addEventListener('wheel',function(e){
+      lists.forEach(function(l){l.scrollTop+=e.deltaY;});
+      e.preventDefault();
+    },{passive:false});
+  });
+
+  hideEl('endscreen');showEl('correction');
+}
+
+document.getElementById('btnToggle').addEventListener('click',function(){
+  revealed=!revealed;
+  document.querySelectorAll('.corr-ans').forEach(function(el){el.classList.toggle('masked',!revealed);});
+  this.textContent=revealed?'🙈 Masquer les réponses':'🐵 Afficher les réponses';
+  this.classList.toggle('revealed',revealed);
+});
+
+/* ════ FICHE A4 PAYSAGE ════ */
+document.getElementById('btnPrint').addEventListener('click',buildPrintSheet);
+function buildPrintSheet(){
+  var page=document.getElementById('printPage');page.innerHTML='';
+  var L=document.createElement('div');L.className='print-side left';
+  L.innerHTML='<div class="print-side-title">⚡ Calcul Mental \u2014 Exercice</div>'+
+    '<div class="print-side-sub">'+OP_LBL[cfg.op]+' \u00b7 '+cfg.totalQ+' op\u00e9rations &nbsp;\u00b7&nbsp; Nom : ______________________</div>'+
+    buildPrintLevels(false);
+  var R=document.createElement('div');R.className='print-side right';
+  R.innerHTML='<div class="print-side-title">\ud83d\udccb Calcul Mental \u2014 Corrig\u00e9</div>'+
+    '<div class="print-side-sub">'+OP_LBL[cfg.op]+' \u00b7 '+cfg.totalQ+' op\u00e9rations</div>'+
+    buildPrintLevels(true);
+  page.appendChild(L);page.appendChild(R);
+  showEl('printSheet');
+}
+
+function buildPrintLevels(withAns){
+  var html='<div class="print-levels">';
+  LEVELS.forEach(function(lv,i){
+    var hist=sess.history[i];
+    html+='<div>';
+    html+='<div class="print-lv-title" style="--col:'+lv.printCol+'">Niveau '+lv.n+'</div>';
+    hist.forEach(function(h,idx){
+      var hl=(idx%4===0)?'print-item hl':'print-item';
+      var gap=(idx>0&&idx%3===0)?' gap-top':'';
+      var ansHtml=withAns
+        ?'<span class="print-ans" style="color:'+lv.printCol+'">'+h.ans+'</span>'
+        :'<span class="print-ans blank"></span>';
+      html+='<div class="'+hl+gap+'">'+
+        '<span class="print-num" style="color:'+lv.printCol+'">'+(idx+1)+'.</span>'+
+        '<span class="print-q">'+h.q+'</span>'+
+        '<span class="print-eq">=</span>'+
+        ansHtml+'</div>';
+    });
+    if(!hist.length)html+='<div class="print-item"><span class="print-q" style="color:#aaa">—</span></div>';
+    html+='</div>';
+  });
+  return html+'</div>';
+}
+
+document.getElementById('btnClosePrint').addEventListener('click',function(){hideEl('printSheet');});
+document.getElementById('btnBackEnd').addEventListener('click',function(){hideEl('correction');showEl('endscreen');});
+document.getElementById('btnReplayCor').addEventListener('click',function(){hideEl('correction');startSession();});
+document.getElementById('btnReplayEnd').addEventListener('click',function(){hideEl('endscreen');startSession();});
+document.getElementById('btnMenuEnd').addEventListener('click',function(){hideEl('endscreen');showEl('setup');});
+
+function showEl(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  if(id==='printSheet')el.classList.add('show');
+  else if(id==='pauseOverlay')el.classList.add('show');
+  else el.style.display='flex';
+}
+function hideEl(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  if(id==='printSheet')el.classList.remove('show');
+  else if(id==='pauseOverlay'||id==='reviewMode')el.classList.remove('show');
+  else el.style.display='none';
+}
+</script>
+</body>
+</html>
