@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calcul Mental – Classe CM</title>
+<title>Calcul Mental – Classe</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 :root{
@@ -160,8 +160,8 @@ html,body{width:100%;height:100%;background:var(--bg);font-family:var(--font);ov
 .review-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;}
 .review-panel{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.04);overflow:hidden;padding:56px 14px 14px;}
 .review-panel::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,var(--col) 0%,transparent 70%);opacity:.05;top:-70px;left:-70px;pointer-events:none;}
-.review-q{font-size:clamp(2.5rem,5.5vw,7rem);font-weight:600;color:var(--text);text-align:center;line-height:1.05;font-family:var(--font);}
-.review-ans{font-size:clamp(1.8rem,3.5vw,4.5rem);font-weight:900;text-align:center;margin-top:12px;font-family:var(--font);}
+.review-q{font-size:clamp(3.5rem,7.5vw,10rem);font-weight:600;color:var(--text);text-align:center;line-height:1.05;font-family:var(--font);}
+.review-ans{font-size:clamp(2.8rem,6vw,8rem);font-weight:900;text-align:center;margin-top:14px;font-family:var(--font);}
 
 /* ══ CORRECTION ÉCRAN ══ */
 #correction{position:fixed;inset:0;z-index:400;background:var(--bg);display:none;flex-direction:column;overflow:hidden;}
@@ -188,69 +188,86 @@ html,body{width:100%;height:100%;background:var(--bg);font-family:var(--font);ov
 
 /* Scroll sync — overflow hidden, scroll géré JS */
 .corr-list{flex:1;overflow-y:hidden;padding:3px 5px 12px;display:flex;flex-direction:column;gap:0;}
-.corr-item{display:flex;align-items:center;padding:7px 9px;gap:5px;border-radius:7px;}
+.corr-item{display:flex;align-items:center;padding:6px 9px;gap:5px;border-radius:7px;}
 .corr-item.row-light{background:transparent;}
-/* Grisé + bordure 1 sur 4 */
-.corr-item.row-hl{background:rgba(255,255,255,.07);border-left:3px solid var(--col);padding-left:6px;}
+/* Grisé plus visible */
+.corr-item.row-hl{background:rgba(255,255,255,.14);border-left:3px solid var(--col);padding-left:6px;}
 /* Espace tous les 3 calculs */
 .corr-item.row-gap{margin-top:8px;}
 
-.corr-num{font-size:1rem;font-weight:700;color:var(--col);opacity:.75;flex-shrink:0;width:26px;text-align:right;}
-/* q + sep + ans groupés et centrés ensemble */
-.corr-qgroup{display:flex;align-items:center;justify-content:center;flex:1;gap:4px;overflow:hidden;}
-.corr-q{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:600;color:var(--text);white-space:nowrap;font-family:var(--font);}
-.corr-sep{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:600;color:rgba(255,255,255,.22);}
-.corr-ans{font-size:clamp(1.2rem,2vw,2.2rem);font-weight:800;color:var(--col);font-family:var(--font);transition:opacity .25s,filter .25s;}
-.corr-ans.masked{opacity:0;filter:blur(6px);background:rgba(255,255,255,.06);border-radius:7px;min-width:40px;display:inline-block;}
+/* Numéro plus gros */
+.corr-num{font-size:1.2rem;font-weight:800;color:var(--col);opacity:.9;flex-shrink:0;width:32px;text-align:right;}
+/* q + sep + ans groupés et centrés — calcul plus petit, résultat garde sa taille */
+.corr-qgroup{display:flex;align-items:center;justify-content:center;flex:1;gap:8px;overflow:hidden;min-width:0;}
+.corr-q{font-size:clamp(1rem,1.7vw,2rem);font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font);min-width:0;flex-shrink:1;}
+.corr-sep{font-size:clamp(1rem,1.7vw,2rem);font-weight:600;color:rgba(255,255,255,.35);flex-shrink:0;}
+.corr-ans{font-size:clamp(1.6rem,2.8vw,3.2rem);font-weight:900;color:var(--col);font-family:var(--font);transition:opacity .25s,filter .25s;flex-shrink:0;}
+.corr-ans.masked{opacity:0;filter:blur(8px);background:rgba(255,255,255,.08);border-radius:8px;min-width:48px;display:inline-block;}
 
 /* ══ FICHE A4 paysage ══ */
-#printSheet{display:none;position:fixed;inset:0;z-index:500;background:#fff;color:#111;overflow:auto;font-family:Arial,sans-serif;}
+#printSheet{display:none;position:fixed;inset:0;z-index:500;background:#f8f8f8;color:#111;overflow:auto;font-family:Arial,sans-serif;}
 #printSheet.show{display:block;}
 .print-toolbar{display:flex;gap:8px;justify-content:center;padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;flex-wrap:wrap;}
 .print-toolbar button{padding:8px 20px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
 .btn-do-print{background:#1a73e8;color:#fff;}
 .btn-close-print{background:#e0e0e0;color:#333;}
 
-/* A4 paysage — deux côtés A5 */
+/* A4 paysage exact : 297mm × 210mm, deux A5 de 148.5mm chacun */
 .print-page{
-  width:297mm;min-height:210mm;
+  width:297mm;
+  height:210mm;
   margin:0 auto;
-  display:grid;
-  grid-template-columns:148.5mm 148.5mm;
+  display:flex;
+  background:#fff;
+  box-shadow:0 2px 12px rgba(0,0,0,.15);
 }
-.print-side{padding:7mm 7mm 5mm;overflow:hidden;}
-.print-side.left{border-right:1.5px dashed #bbb;}
-.print-side-title{font-size:11pt;font-weight:900;text-align:center;margin-bottom:3mm;padding-bottom:2mm;border-bottom:2px solid #333;color:#111;}
-.print-side-sub{font-size:7pt;color:#666;text-align:center;margin-bottom:3mm;}
-
-/* 4 colonnes dans chaque côté */
-.print-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5mm;}
-.print-lv-title{font-size:7pt;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--col,#333);border-bottom:2px solid var(--col,#333);padding-bottom:.8mm;margin-bottom:1.5mm;white-space:nowrap;}
-
-/* Chaque calcul sur UNE seule ligne, lignes alignées gauche-droite */
-.print-item{
-  display:flex;align-items:baseline;
-  padding:1.4mm 1mm;   /* plus d'espace vertical */
-  font-size:9pt;
-  white-space:nowrap;
-  border-radius:1mm;
-  overflow:hidden;
-  height:6mm;          /* hauteur fixe pour alignement gauche/droite */
+/* Chaque moitié A5 — padding intérieur, séparateur central net */
+.print-side{
+  width:148.5mm;
+  height:210mm;
+  padding:8mm 7mm 6mm;
   box-sizing:border-box;
+  overflow:hidden;
+  flex-shrink:0;
 }
-.print-item.hl{background:#f3f3f3;}
-.print-item.gap-top{margin-top:2mm;}
-.print-num{font-weight:700;color:var(--col,#888);width:4.5mm;flex-shrink:0;text-align:right;font-size:7pt;margin-right:1mm;}
-.print-q{font-weight:600;flex-shrink:0;}
-.print-eq{margin:0 1.5mm;color:#777;}
+.print-side.left{border-right:2px solid #ccc;}
+.print-side-title{font-size:12pt;font-weight:900;text-align:center;margin-bottom:3mm;padding-bottom:2.5mm;border-bottom:2px solid #333;color:#111;}
+.print-side-sub{font-size:7.5pt;color:#555;text-align:center;margin-bottom:3mm;}
+
+/* 4 colonnes équilibrées — hauteur totale disponible calculée */
+.print-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;height:calc(210mm - 34mm);}
+.print-lv-col{display:flex;flex-direction:column;overflow:hidden;}
+.print-lv-title{font-size:7.5pt;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--col,#333);border-bottom:2px solid var(--col,#333);padding-bottom:1mm;margin-bottom:1.5mm;white-space:nowrap;}
+
+/* Bloc calcul : numéro + calcul sur ligne 1, réponse sur ligne 2 */
+.print-item{
+  display:flex;
+  flex-direction:column;
+  padding:.4mm 1.5mm .4mm 1mm;
+  border-radius:1mm;
+  flex-shrink:0;
+}
+.print-item.hl{background:#e8e8e8;}
+/* Supprimer les espaces entre calculs */
+.print-item.gap-top{margin-top:0;}
+
+/* Ligne 1 : numéro + calcul */
+.print-line1{display:flex;align-items:baseline;gap:.5mm;white-space:nowrap;overflow:hidden;}
+/* Ligne 2 : = réponse */
+.print-line2{display:flex;align-items:baseline;padding-left:4mm;white-space:nowrap;overflow:hidden;}
+
+.print-num{font-weight:700;color:var(--col,#888);flex-shrink:0;text-align:right;margin-right:.5mm;min-width:3.5mm;}
+.print-q{font-weight:600;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;}
+.print-eq{color:#777;flex-shrink:0;margin-right:.5mm;}
 .print-ans{font-weight:900;flex-shrink:0;}
-.print-ans.blank{display:inline-block;width:12mm;border-bottom:1px solid #aaa;vertical-align:baseline;}
+.print-ans.blank{display:inline-block;min-width:8mm;border-bottom:1.5px solid #888;vertical-align:baseline;}
 
 @media print{
   .print-toolbar{display:none;}
   #printSheet{position:static;overflow:visible;background:#fff;}
   body>*:not(#printSheet){display:none!important;}
-  .print-page{width:297mm;min-height:210mm;}
+  .print-page{width:297mm;height:210mm;box-shadow:none;margin:0;}
+  @page{size:A4 landscape;margin:0;}
 }
 </style>
 </head>
@@ -647,371 +664,527 @@ var LEVELS=[
 ];
 var OP_LBL={add:'Addition',sub:'Soustraction',mul:'Multiplication',div:'Division'};
 
-/* ════ GÉNÉRATEURS ════
-   Niveaux : 1=CE2  2=CM1  3=CM2  4=6ème
-   Chaque palier est clairement distinct.
-════ */
+/* ════════════════════════════════════════════════════════════
+   GÉNÉRATEURS — difficulté basée sur la NATURE cognitive du calcul
+   Niveaux :
+     1 = sans retenue, calcul direct (CE2/début CM1)
+     2 = retenue simple, décomposition facile (CM1)
+     3 = retenues fréquentes, stratégie mentale (CM2)
+     4 = forte charge, enchaînements, opérations combinées (6ème)
+   La taille des nombres est secondaire.
+════════════════════════════════════════════════════════════ */
 var GENERATORS={
 
   add:[
-    /* 0 — 2 nb < 10 */
+    /* 0 — 2 nombres < 10 */
     function(lv){
-      // CE2:1-5+1-5 | CM1:1-7+1-7 | CM2:2-8+2-8 | 6e:3-9+3-9
-      var lo=[1,1,2,3],hi=[5,7,8,9];
-      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
-      return{q:a+' + '+b,ans:a+b};
+      if(lv===1){var a=rand(1,4),b=rand(1,9-a);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=rand(4,7),b=rand(Math.max(1,10-a),9);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=rand(5,8),b=rand(5,9);return{q:a+' + '+b,ans:a+b};}
+      var a=rand(4,8),b=rand(4,8),c=rand(3,7);return{q:a+' + '+b+' + '+c,ans:a+b+c};
     },
     /* 1 — 2 multiples de 10 < 100 */
     function(lv){
-      // CE2:10-30 | CM1:10-50 | CM2:10-70 | 6e:10-90
-      var hi=[3,5,7,9];
-      var a=rand(1,hi[lv-1])*10,b=rand(1,hi[lv-1])*10;
-      return{q:a+' + '+b,ans:a+b};
+      if(lv===1){var a=rand(1,4)*10,b=rand(1,9-Math.floor(a/10))*10;return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=rand(5,9)*10,b=rand(1,10-Math.floor(a/10))*10;return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=rand(4,9)*10,b=rand(4,9)*10;return{q:a+' + '+b,ans:a+b};}
+      var a=rand(1,9)*100,b=rand(1,9)*100;return{q:a+' + '+b,ans:a+b};
     },
-    /* 2 — nb<10 + nb<100 */
+    /* 2 — un nombre < 10 et un nombre < 100 */
     function(lv){
-      // CE2:+nb10-20 | CM1:+nb10-50 | CM2:+nb20-80 | 6e:+nb30-99
-      var blo=[10,10,20,30],bhi=[20,50,80,99];
-      var a=rand(1,9),b=rand(blo[lv-1],bhi[lv-1]);
-      return{q:a+' + '+b,ans:a+b};
+      if(lv===1){var b=rand(10,50);var u=b%10;var a=rand(1,Math.max(1,9-u));return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var b=rand(10,79);var u=b%10;var a=rand(Math.max(1,10-u),9);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var b=rand(80,99);var a=rand(2,9);return{q:a+' + '+b,ans:a+b};}
+      var b=rand(90,190);var a=rand(5,9);return{q:a+' + '+b,ans:a+b};
     },
-    /* 3 — +9 à nb 2 chiffres */
+    /* 3 — additionner 9 à un nombre */
     function(lv){
-      // CE2:10-29 | CM1:20-49 | CM2:30-69 | 6e:50-89
-      var lo=[10,20,30,50],hi=[29,49,69,89];
-      var b=rand(lo[lv-1],hi[lv-1]);
-      return{q:'9 + '+b,ans:9+b};
+      if(lv===1){var b=rand(1,8)*10;return{q:'9 + '+b,ans:9+b};}
+      if(lv===2){var b=rand(11,59);return{q:'9 + '+b,ans:9+b};}
+      if(lv===3){var b=rand(60,90);return{q:'9 + '+b,ans:9+b};}
+      var n=pick([19,29,39]);var b=rand(20,80);return{q:n+' + '+b,ans:n+b};
     },
-    /* 4 — +8 à nb 2 chiffres */
+    /* 4 — additionner 8 à un nombre */
     function(lv){
-      var lo=[10,20,30,50],hi=[29,49,69,89];
-      var b=rand(lo[lv-1],hi[lv-1]);
-      return{q:'8 + '+b,ans:8+b};
+      if(lv===1){var b=rand(1,9)*10;return{q:'8 + '+b,ans:8+b};}
+      if(lv===2){var b=rand(11,59);return{q:'8 + '+b,ans:8+b};}
+      if(lv===3){var b=rand(60,92);return{q:'8 + '+b,ans:8+b};}
+      var n=pick([18,28,38]);var b=rand(20,80);return{q:n+' + '+b,ans:n+b};
     },
-    /* 5 — 2 nb multiples 0 ou 5 < 100 */
+    /* 5 — 2 nombres multiples de 0 ou 5 < 100 */
     function(lv){
-      // CE2: max 30 | CM1: max 50 | CM2: max 70 | 6e: max 95
-      var hi=[30,50,70,95];
-      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
-      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
-      return{q:a+' + '+b,ans:a+b};
+      function p5(lo,hi){return rand(Math.ceil(lo/5),Math.floor(hi/5))*5;}
+      if(lv===1){var a=p5(5,30),b=p5(5,30);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=p5(10,50),b=p5(10,50);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=p5(15,70),b=p5(15,70);return{q:a+' + '+b,ans:a+b};}
+      var a=p5(25,200),b=p5(25,200);return{q:a+' + '+b,ans:a+b};
     },
-    /* 6 — déc 1 déc < 10 + nb < 100 */
+    /* 6 — décimal 1 déc < 10 + entier < 100 */
     function(lv){
-      // CE2:déc<3 b<30 | CM1:déc<5 b<50 | CM2:déc<8 b<80 | 6e:déc<10 b<99
-      var dm=[2.9,4.9,7.9,9.9],bm=[30,50,80,99];
-      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      var b=rand(10,bm[lv-1]);
-      return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
+      if(lv===1){var a=rnd1(rand(11,29)/10),b=rand(10,30);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      if(lv===2){var a=rnd1(rand(11,49)/10),b=rand(10,60);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      if(lv===3){var a=rnd1(rand(11,89)/10),b=rand(20,80);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      var a=rnd1(rand(11,99)/10),b=rand(50,150);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
     },
-    /* 7 — 2 déc 1 déc < 10 */
+    /* 7 — 2 décimaux 1 déc < 10 */
     function(lv){
-      var dm=[2.9,4.9,7.9,9.9];
-      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+      if(lv===1){var a=rnd1(rand(11,29)/10),b=rnd1(rand(11,29)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      if(lv===2){var a=rnd1(rand(11,49)/10),b=rnd1(rand(11,49)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      if(lv===3){var a=rnd1(rand(11,79)/10),b=rnd1(rand(11,79)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      var a=rnd1(rand(11,99)/10),b=rnd1(rand(11,99)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
     },
-    /* 8 — 2 nb < 100 */
+    /* 8 — 2 nombres < 100, nature de la retenue */
     function(lv){
-      // CE2:5-20 | CM1:10-50 | CM2:20-80 | 6e:30-99
-      var lo=[5,10,20,30],hi=[20,50,80,99];
-      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
-      return{q:a+' + '+b,ans:a+b};
+      var a,b;
+      if(lv===1){
+        do{a=rand(11,49);b=rand(11,49);}while((a%10)+(b%10)>=10||(Math.floor(a/10)+Math.floor(b/10))>=10);
+        return{q:a+' + '+b,ans:a+b};
+      }
+      if(lv===2){
+        do{a=rand(14,49);b=rand(14,49);}while((a%10)+(b%10)<10);
+        return{q:a+' + '+b,ans:a+b};
+      }
+      if(lv===3){
+        do{a=rand(35,79);b=rand(35,79);}while(!((a%10)+(b%10)>=10&&Math.floor(a/10)+Math.floor(b/10)>=9));
+        return{q:a+' + '+b,ans:a+b};
+      }
+      a=rand(50,99);b=rand(50,99);return{q:a+' + '+b,ans:a+b};
     },
-    /* 9 — déc 1 déc < 100 + nb < 100 */
+    /* 9 — décimal 1 déc < 100 + entier */
     function(lv){
-      var dm=[9.9,29.9,59.9,99.9],bm=[20,50,80,99];
-      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      var b=rand(10,bm[lv-1]);
-      return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
+      if(lv===1){var a=rnd1(rand(101,299)/10),b=rand(5,20);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      if(lv===2){var a=rnd1(rand(101,499)/10),b=rand(10,50);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      if(lv===3){var a=rnd1(rand(201,799)/10),b=rand(20,80);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      var a=rnd1(rand(301,999)/10),b=rand(50,150);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};
     },
-    /* 10 — 2 déc 2 déc < 10 */
+    /* 10 — 2 décimaux 2 déc < 10 */
     function(lv){
-      var dm=[1.99,3.99,6.99,9.99];
-      var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
-      var b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
-      return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
+      if(lv===1){var a=rnd2(rand(101,199)/100),b=rnd2(rand(101,199)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      if(lv===2){var a=rnd2(rand(101,299)/100),b=rnd2(rand(101,299)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      if(lv===3){var a=rnd2(rand(201,499)/100),b=rnd2(rand(201,499)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      var a=rnd2(rand(201,799)/100),b=rnd2(rand(201,799)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
     },
-    /* 11 — 2 déc 1 déc < 100 */
+    /* 11 — 2 décimaux 1 déc < 100 */
     function(lv){
-      var dm=[9.9,29.9,59.9,99.9];
-      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+      if(lv===1){var a=rnd1(rand(101,299)/10),b=rnd1(rand(101,299)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      if(lv===2){var a=rnd1(rand(101,499)/10),b=rnd1(rand(101,499)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      if(lv===3){var a=rnd1(rand(201,699)/10),b=rnd1(rand(201,699)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      var a=rnd1(rand(301,899)/10),b=rnd1(rand(301,899)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
     },
-    /* 12 — 2 nb multiples 0 ou 5 < 1000 */
+    /* 12 — 2 multiples de 0 ou 5 < 1000 */
     function(lv){
-      var hi=[100,300,600,995];
-      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
-      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
-      return{q:a+' + '+b,ans:a+b};
+      function p5(lo,hi){return rand(Math.ceil(lo/5),Math.floor(hi/5))*5;}
+      if(lv===1){var a=p5(50,200),b=p5(50,200);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=p5(100,400),b=p5(100,400);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=p5(200,700),b=p5(200,700);return{q:a+' + '+b,ans:a+b};}
+      var a=p5(300,900),b=p5(300,900);return{q:a+' + '+b,ans:a+b};
     },
-    /* 13 — +19 à nb 2 ou 3 chiffres */
+    /* 13 — additionner 19 ou dérivés */
     function(lv){
-      var lo=[10,20,50,100],hi=[50,120,300,800];
-      var b=rand(lo[lv-1],hi[lv-1]);
-      return{q:'19 + '+b,ans:19+b};
+      if(lv===1){var b=rand(1,7)*10;return{q:'19 + '+b,ans:19+b};}
+      if(lv===2){var b=rand(21,69);return{q:'19 + '+b,ans:19+b};}
+      if(lv===3){var b=rand(30,170);return{q:'29 + '+b,ans:29+b};}
+      var n=pick([39,49,59]);var b=rand(50,250);return{q:n+' + '+b,ans:n+b};
     },
-    /* 14 — +18 à nb 2 ou 3 chiffres */
+    /* 14 — additionner 18 ou dérivés */
     function(lv){
-      var lo=[10,20,50,100],hi=[50,120,300,800];
-      var b=rand(lo[lv-1],hi[lv-1]);
-      return{q:'18 + '+b,ans:18+b};
+      if(lv===1){var b=rand(1,7)*10;return{q:'18 + '+b,ans:18+b};}
+      if(lv===2){var b=rand(21,69);return{q:'18 + '+b,ans:18+b};}
+      if(lv===3){var b=rand(30,170);return{q:'28 + '+b,ans:28+b};}
+      var n=pick([38,48,58]);var b=rand(50,250);return{q:n+' + '+b,ans:n+b};
     },
-    /* 15 — nb<100 + nb<1000 */
+    /* 15 — un < 100 et un < 1000 */
     function(lv){
-      var am=[20,50,80,99],bm=[150,350,600,999];
-      var a=rand(10,am[lv-1]),b=rand(100,bm[lv-1]);
-      return{q:a+' + '+b,ans:a+b};
+      var a,b;
+      if(lv===1){do{a=rand(10,40);b=rand(100,400);}while((a%10)+(b%10)>=10);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){a=rand(15,60);b=rand(200,600);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){a=rand(35,90);b=rand(400,800);return{q:a+' + '+b,ans:a+b};}
+      a=rand(50,99);b=rand(700,999);return{q:a+' + '+b,ans:a+b};
     },
     /* 16 — se terminant par 9 */
     function(lv){
-      var hi=[4,9,19,49]; // valeur × 10 - 1
-      var a=(rand(1,hi[lv-1]))*10-1;
-      var b=(rand(1,hi[lv-1]))*10-1;
-      if(a<9)a=9;if(b<9)b=9;
-      return{q:a+' + '+b,ans:a+b};
+      if(lv===1){var a=Math.max(9,rand(1,3)*10-1),b=Math.max(9,rand(1,3)*10-1);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=rand(2,5)*10-1,b=rand(2,5)*10-1;return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=rand(3,8)*10-1,b=rand(3,8)*10-1;return{q:a+' + '+b,ans:a+b};}
+      var a=rand(2,9)*100-1,b=rand(2,9)*10-1;return{q:a+' + '+b,ans:a+b};
     },
     /* 17 — se terminant par 8 */
     function(lv){
-      var hi=[4,9,19,49];
-      var a=(rand(1,hi[lv-1]))*10-2;
-      var b=(rand(1,hi[lv-1]))*10-2;
-      if(a<8)a=8;if(b<8)b=8;
-      return{q:a+' + '+b,ans:a+b};
+      if(lv===1){var a=Math.max(8,rand(1,3)*10-2),b=Math.max(8,rand(1,3)*10-2);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=rand(2,5)*10-2,b=rand(2,5)*10-2;return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){var a=rand(3,8)*10-2,b=rand(3,8)*10-2;return{q:a+' + '+b,ans:a+b};}
+      var a=rand(2,9)*100-2,b=rand(2,9)*10-2;return{q:a+' + '+b,ans:a+b};
     },
-    /* 18 — 2 déc 2 déc < 100 */
+    /* 18 — 2 décimaux 2 déc < 100 */
     function(lv){
-      var dm=[9.99,29.99,59.99,99.99];
-      var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
-      var b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);
-      return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
+      if(lv===1){var a=rnd2(rand(101,299)/100),b=rnd2(rand(101,299)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      if(lv===2){var a=rnd2(rand(201,499)/100),b=rnd2(rand(201,499)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      if(lv===3){var a=rnd2(rand(1001,4999)/100),b=rnd2(rand(1001,4999)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};}
+      var a=rnd2(rand(2001,7999)/100),b=rnd2(rand(2001,7999)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
     },
-    /* 19 — 2 nb < 1000 */
+    /* 19 — 2 nombres < 1000, progression retenues */
     function(lv){
-      var lo=[100,150,200,400],hi=[250,400,600,999];
-      var a=rand(lo[lv-1],hi[lv-1]),b=rand(lo[lv-1],hi[lv-1]);
-      return{q:a+' + '+b,ans:a+b};
+      var a,b;
+      if(lv===1){
+        do{a=rand(1,3)*100+rand(1,4)*10;b=rand(1,3)*100+rand(1,4)*10;}
+        while((a%10)+(b%10)>=10||Math.floor(a/10%10)+Math.floor(b/10%10)>=10);
+        return{q:a+' + '+b,ans:a+b};
+      }
+      if(lv===2){a=rand(120,450);b=rand(120,450);return{q:a+' + '+b,ans:a+b};}
+      if(lv===3){a=rand(250,650);b=rand(250,650);return{q:a+' + '+b,ans:a+b};}
+      a=rand(400,899);b=rand(400,899);return{q:a+' + '+b,ans:a+b};
     },
-    /* 20 — 2 nb entiers ou décimaux < 1000 */
+    /* 20 — entiers ou décimaux < 1000 */
     function(lv){
-      var mx=[150,300,600,999];
-      function mk(m){return (lv>=3&&Math.random()<.5)?rnd1(rand(10,m*10)/10):rand(1,m);}
-      var a=mk(mx[lv-1]),b=mk(mx[lv-1]);
-      return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};
+      if(lv===1){var a=rand(100,350),b=rand(100,350);return{q:a+' + '+b,ans:a+b};}
+      if(lv===2){var a=rnd1(rand(1001,3999)/10),b=rand(100,300);return{q:fmt(a)+' + '+b,ans:rnd1(a+b)};}
+      if(lv===3){var a=rnd1(rand(2001,6999)/10),b=rnd1(rand(1001,3999)/10);return{q:fmt(a)+' + '+fmt(b),ans:rnd1(a+b)};}
+      var a=rnd2(rand(20001,69999)/100),b=rnd2(rand(10001,39999)/100);return{q:fmt(a)+' + '+fmt(b),ans:rnd2(a+b)};
     },
   ],
 
   sub:[
-    /* 0 */ function(lv){
-      var bhi=[30,60,80,99];
-      var b=rand(12,bhi[lv-1]);
-      var a=rand(1,Math.min(9,b-2));
-      return{q:b+' \u2212 '+a,ans:b-a};
+    /* 0 — un nombre < 10 soustrait à un < 100 */
+    function(lv){
+      if(lv===1){var b=rand(20,50);var u=b%10;var a=rand(1,u||1);return{q:b+' \u2212 '+a,ans:b-a};}
+      if(lv===2){var b=rand(21,69);var u=b%10;var a=rand(Math.max(1,(10-u)%10)||1,9);if(a>b)a=1;return{q:b+' \u2212 '+a,ans:b-a};}
+      if(lv===3){var b=rand(50,99);var a=rand(3,9);return{q:b+' \u2212 '+a,ans:b-a};}
+      var b=rand(100,199);var a=rand(4,9);return{q:b+' \u2212 '+a,ans:b-a};
     },
-    /* 1 */ function(lv){var lo=[13,20,30,50],hi=[30,55,75,90];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 9',ans:b-9};},
-    /* 2 */ function(lv){var lo=[12,20,30,50],hi=[30,55,75,90];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 8',ans:b-8};},
-    /* 3 */ function(lv){
-      var hi=[30,50,70,95];
-      var a=rand(1,Math.floor(hi[lv-1]/5))*5;
-      var b=rand(1,Math.floor(hi[lv-1]/5))*5;
-      if(b>a){var t=a;a=b;b=t;}
-      return{q:a+' \u2212 '+b,ans:a-b};
+    /* 1 — soustraire 9 */
+    function(lv){
+      if(lv===1){var b=rand(2,5)*10;return{q:b+' \u2212 9',ans:b-9};}
+      if(lv===2){var b=rand(15,55);return{q:b+' \u2212 9',ans:b-9};}
+      if(lv===3){var b=rand(50,95);return{q:b+' \u2212 9',ans:b-9};}
+      var b=rand(100,300);return{q:b+' \u2212 9',ans:b-9};
     },
-    /* 4 */ function(lv){
-      var bm=[9.9,19.9,39.9,79.9];
-      var b=rnd1(rand(20,Math.round(bm[lv-1]*10))/10);
-      var a=rand(1,9);
-      return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};
+    /* 2 — soustraire 8 */
+    function(lv){
+      if(lv===1){var b=rand(2,5)*10;return{q:b+' \u2212 8',ans:b-8};}
+      if(lv===2){var b=rand(14,54);return{q:b+' \u2212 8',ans:b-8};}
+      if(lv===3){var b=rand(50,95);return{q:b+' \u2212 8',ans:b-8};}
+      var b=rand(100,300);return{q:b+' \u2212 8',ans:b-8};
     },
-    /* 5 */ function(lv){
-      var bm=[5.99,9.99,19.99,49.99];
-      var b=rnd2(rand(200,Math.round(bm[lv-1]*100))/100);
-      var a=rand(1,Math.min(4,Math.floor(b)-1));
-      return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
-    },
-    /* 6 */ function(lv){
-      var lo=[15,20,30,50],hi=[35,65,85,99];
-      var a=rand(lo[lv-1],hi[lv-1]),b=rand(1,a-5);
-      return{q:a+' \u2212 '+b,ans:a-b};
-    },
-    /* 7 */ function(lv){
-      var hi=[150,300,600,995];
-      var a=rand(2,Math.floor(hi[lv-1]/5))*5;
-      var b=rand(1,Math.floor(a/5)-1)*5;
-      return{q:a+' \u2212 '+b,ans:a-b};
-    },
-    /* 8 */ function(lv){var lo=[25,35,55,120];var hi=[60,180,450,800];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 19',ans:b-19};},
-    /* 9 */ function(lv){var lo=[25,35,55,120];var hi=[60,180,450,800];var b=rand(lo[lv-1],hi[lv-1]);return{q:b+' \u2212 18',ans:b-18};},
-    /* 10 */ function(lv){
-      var bm=[9.9,19.9,49.9,99.9];var dec=(lv>=3)?2:1;
-      var b=(dec===1)?rnd1(rand(100,Math.round(bm[lv-1]*10))/10):rnd2(rand(1000,Math.round(bm[lv-1]*100))/100);
-      var a=rand(1,Math.min(50,Math.floor(b)-1));
-      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
-    },
-    /* 11 */ function(lv){
-      var dm=[1.9,3.9,6.9,9.9];
-      var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      var b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);
-      if(b>a){var t=a;a=b;b=t;}
-      return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};
-    },
-    /* 12 */ function(lv){var bm=[200,400,650,999];var b=rand(110,bm[lv-1]);var a=rand(10,Math.min(99,b-10));return{q:b+' \u2212 '+a,ans:b-a};},
-    /* 13 */ function(lv){
-      var bm=[99.9,199.9,499.9,999.9];var dec=(lv>=3)?2:1;
-      var b=(dec===1)?rnd1(rand(1000,Math.round(bm[lv-1]*10))/10):rnd2(rand(10000,Math.round(bm[lv-1]*100))/100);
-      var a=rand(5,99);
-      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
-    },
-    /* 14 */ function(lv){
-      var dec=(lv>=3)?2:1;var dm=[1.9,3.9,5.99,9.99];
+    /* 3 — 2 multiples de 0 ou 5 */
+    function(lv){
+      function p5(lo,hi){return rand(Math.ceil(lo/5),Math.floor(hi/5))*5;}
       var a,b;
-      if(dec===1){a=rnd1(rand(20,Math.round(dm[lv-1]*10))/10);b=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);}
-      else{a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);b=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);}
-      if(b>a){var t=a;a=b;b=t;}
-      return{q:fmt(a)+' \u2212 '+fmt(b),ans:dec===1?rnd1(a-b):rnd2(a-b)};
+      if(lv===1){a=p5(15,50);b=p5(5,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){a=p5(20,70);b=p5(10,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=p5(35,95);b=p5(15,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=p5(100,500);b=p5(50,a-5);return{q:a+' \u2212 '+b,ans:a-b};
     },
-    /* 15 */ function(lv){
-      var hi=[3,8,18,48];
-      var a=rand(2,hi[lv-1])*10-1;var b=rand(1,Math.floor(hi[lv-1]/2))*10-1;
-      if(b>=a)b=a-10;if(b<9)b=9;
-      return{q:a+' \u2212 '+b,ans:a-b};
+    /* 4 — entier soustrait à décimal 1 déc */
+    function(lv){
+      if(lv===1){var b=rnd1(rand(21,49)/10);var a=rand(1,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===2){var b=rnd1(rand(31,79)/10);var a=rand(1,Math.floor(b));return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===3){var b=rnd1(rand(201,599)/10);var a=rand(5,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      var b=rnd1(rand(501,999)/10);var a=rand(10,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};
     },
-    /* 16 */ function(lv){
-      var hi=[3,8,18,48];
-      var a=rand(2,hi[lv-1])*10-2;var b=rand(1,Math.floor(hi[lv-1]/2))*10-2;
-      if(b>=a)b=a-10;if(b<8)b=8;
-      return{q:a+' \u2212 '+b,ans:a-b};
+    /* 5 — entier soustrait à décimal 2 déc */
+    function(lv){
+      if(lv===1){var b=rnd2(rand(201,499)/100);var a=rand(1,Math.floor(b)||1);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      if(lv===2){var b=rnd2(rand(301,799)/100);var a=rand(1,Math.floor(b));return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      if(lv===3){var b=rnd2(rand(2001,5999)/100);var a=rand(5,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      var b=rnd2(rand(4001,9999)/100);var a=rand(10,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
     },
-    /* 17 */ function(lv){var lo=[100,150,250,500];var hi=[250,450,700,999];var a=rand(lo[lv-1],hi[lv-1]);var b=rand(10,a-10);return{q:a+' \u2212 '+b,ans:a-b};},
-    /* 18 */ function(lv){
-      var dec=(lv>=3)?2:1;var dm=[4.9,14.9,39.9,79.9];
+    /* 6 — 2 nombres < 100, progression emprunt */
+    function(lv){
       var a,b;
-      if(dec===1){a=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);b=rnd1(rand(10,Math.round(dm[lv-1]*10/2))/10);}
-      else{a=rnd2(rand(500,Math.round(dm[lv-1]*100))/100);b=rnd2(rand(100,Math.round(dm[lv-1]*100/2))/100);}
-      if(b>a){var t=a;a=b;b=t;}
-      return{q:fmt(a)+' \u2212 '+fmt(b),ans:dec===1?rnd1(a-b):rnd2(a-b)};
+      if(lv===1){do{a=rand(20,60);b=rand(10,a-5);}while(a%10<b%10);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){do{a=rand(25,75);b=rand(10,a-5);}while(!(a%10<b%10));return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=rand(50,99);b=rand(20,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=rand(100,200);b=rand(30,99);return{q:a+' \u2212 '+b,ans:a-b};
     },
-    /* 19 */ function(lv){
-      var bm=[149.9,299.9,599.9,999.9];var dec=(lv>=3)?2:1;
-      var b=(dec===1)?rnd1(rand(1000,Math.round(bm[lv-1]*10))/10):rnd2(rand(10000,Math.round(bm[lv-1]*100))/100);
-      var a=rand(1,Math.min(500,Math.floor(b)-5));
-      return{q:fmt(b)+' \u2212 '+a,ans:dec===1?rnd1(b-a):rnd2(b-a)};
+    /* 7 — 2 multiples de 0 ou 5 < 1000 */
+    function(lv){
+      function p5(lo,hi){return rand(Math.ceil(lo/5),Math.floor(hi/5))*5;}
+      var a,b;
+      if(lv===1){a=p5(100,300);b=p5(20,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){a=p5(200,600);b=p5(50,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=p5(300,800);b=p5(100,a-5);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=p5(500,995);b=p5(200,a-5);return{q:a+' \u2212 '+b,ans:a-b};
     },
-    /* 20 */ function(lv){
-      var dm=[4.9,14.9,39.9,79.9];
-      var b=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);
-      var a=rnd1(rand(10,Math.round(b*10)-1)/10);
-      return{q:fmt(b)+' \u2212 '+fmt(a),ans:rnd1(b-a)};
+    /* 8 — soustraire 19 ou dérivés */
+    function(lv){
+      if(lv===1){var b=rand(2,5)*10;return{q:b+' \u2212 19',ans:b-19};}
+      if(lv===2){var b=rand(25,80);return{q:b+' \u2212 19',ans:b-19};}
+      if(lv===3){var b=rand(50,200);return{q:b+' \u2212 29',ans:b-29};}
+      var n=pick([39,49,59]);var b=rand(n+20,350);return{q:b+' \u2212 '+n,ans:b-n};
     },
-    /* 21 */ function(lv){var dm=[1.9,3.9,6.9,9.9];var a=rnd1(rand(10,Math.round(dm[lv-1]*10))/10);var b=rnd1(rand(5,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
-    /* 22 */ function(lv){var dm=[1.99,3.99,6.99,9.99];var a=rnd2(rand(100,Math.round(dm[lv-1]*100))/100);var b=rnd2(rand(50,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
-    /* 23 */ function(lv){var dm=[4.9,14.9,39.9,79.9];var a=rnd1(rand(50,Math.round(dm[lv-1]*10))/10);var b=rnd1(rand(10,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
-    /* 24 */ function(lv){var dm=[4.99,14.99,39.99,79.99];var a=rnd2(rand(500,Math.round(dm[lv-1]*100))/100);var b=rnd2(rand(100,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
-    /* 25 */ function(lv){
-      var mx=[150,350,600,999];
-      function mk(m){return(lv>=3&&Math.random()<.45)?rnd1(rand(10,m*10)/10):rand(1,m);}
-      var a=mk(mx[lv-1]),b=mk(mx[lv-1]);
-      if(b>a){var t=a;a=b;b=t;}
-      return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};
+    /* 9 — soustraire 18 ou dérivés */
+    function(lv){
+      if(lv===1){var b=rand(2,5)*10;return{q:b+' \u2212 18',ans:b-18};}
+      if(lv===2){var b=rand(24,80);return{q:b+' \u2212 18',ans:b-18};}
+      if(lv===3){var b=rand(50,200);return{q:b+' \u2212 28',ans:b-28};}
+      var n=pick([38,48,58]);var b=rand(n+20,350);return{q:b+' \u2212 '+n,ans:b-n};
+    },
+    /* 10 — entier soustrait à décimal */
+    function(lv){
+      if(lv===1){var b=rnd1(rand(151,399)/10);var a=rand(5,Math.floor(b)-2);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===2){var b=rnd1(rand(201,599)/10);var a=rand(10,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===3){var b=rnd2(rand(2001,5999)/100);var a=rand(10,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      var b=rnd2(rand(5001,9999)/100);var a=rand(20,Math.floor(b)-1);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
+    },
+    /* 11 — 2 décimaux 1 déc < 10 */
+    function(lv){
+      var a,b;
+      if(lv===1){a=rnd1(rand(31,59)/10);b=rnd1(rand(11,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      if(lv===2){a=rnd1(rand(41,79)/10);b=rnd1(rand(11,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      if(lv===3){a=rnd1(rand(51,89)/10);b=rnd1(rand(21,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      a=rnd1(rand(61,99)/10);b=rnd1(rand(31,Math.round(a*10)-1)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};
+    },
+    /* 12 — entier < 100 soustrait à entier < 1000 */
+    function(lv){
+      if(lv===1){var b=rand(150,400),a=rand(10,40);while(b%100<a){b=rand(150,400);}return{q:b+' \u2212 '+a,ans:b-a};}
+      if(lv===2){var b=rand(200,600),a=rand(20,80);return{q:b+' \u2212 '+a,ans:b-a};}
+      if(lv===3){var b=rand(300,800),a=rand(30,99);return{q:b+' \u2212 '+a,ans:b-a};}
+      var b=rand(500,999),a=rand(50,99);return{q:b+' \u2212 '+a,ans:b-a};
+    },
+    /* 13 — entier < 100 soustrait à décimal < 1000 */
+    function(lv){
+      if(lv===1){var b=rnd1(rand(1501,3999)/10),a=rand(10,30);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===2){var b=rnd1(rand(2001,5999)/10),a=rand(20,70);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===3){var b=rnd2(rand(20001,59999)/100),a=rand(30,90);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      var b=rnd2(rand(50001,99999)/100),a=rand(50,99);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
+    },
+    /* 14 — 2 décimaux 1 ou 2 déc < 10 */
+    function(lv){
+      var a,b;
+      if(lv===1){a=rnd1(rand(31,59)/10);b=rnd1(rand(11,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      if(lv===2){a=rnd2(rand(301,599)/100);b=rnd2(rand(101,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};}
+      if(lv===3){a=rnd2(rand(501,799)/100);b=rnd2(rand(201,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};}
+      a=rnd2(rand(601,999)/100);b=rnd2(rand(301,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};
+    },
+    /* 15 — se terminant par 9 */
+    function(lv){
+      var a,b;
+      if(lv===1){a=rand(2,4)*10-1;b=rand(1,Math.floor(a/10)-1)*10-1;if(b<9)b=9;return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){a=rand(3,7)*10-1;b=rand(1,Math.floor(a/10)-1)*10-1;if(b<9)b=9;return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=rand(4,9)*10-1;b=Math.max(9,rand(2,Math.floor(a/10)-1)*10-1);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=rand(2,9)*100-1;b=rand(2,9)*10-1;return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 16 — se terminant par 8 */
+    function(lv){
+      var a,b;
+      if(lv===1){a=rand(2,4)*10-2;b=Math.max(8,rand(1,Math.floor(a/10)-1)*10-2);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){a=rand(3,7)*10-2;b=Math.max(8,rand(1,Math.floor(a/10)-1)*10-2);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=rand(4,9)*10-2;b=Math.max(8,rand(2,Math.floor(a/10)-1)*10-2);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=rand(2,9)*100-2;b=rand(2,9)*10-2;return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 17 — 2 nombres < 1000 */
+    function(lv){
+      var a,b;
+      if(lv===1){do{a=rand(200,500);b=rand(100,a-50);}while(a%100<b%100);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){a=rand(300,700);b=rand(100,a-50);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===3){a=rand(400,900);b=rand(150,a-50);return{q:a+' \u2212 '+b,ans:a-b};}
+      a=rand(600,999);b=rand(250,a-50);return{q:a+' \u2212 '+b,ans:a-b};
+    },
+    /* 18 — 2 décimaux 1 ou 2 déc < 100 */
+    function(lv){
+      var a,b;
+      if(lv===1){a=rnd1(rand(151,399)/10);b=rnd1(rand(51,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      if(lv===2){a=rnd1(rand(251,599)/10);b=rnd1(rand(101,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      if(lv===3){a=rnd2(rand(2001,5999)/100);b=rnd2(rand(1001,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};}
+      a=rnd2(rand(4001,9999)/100);b=rnd2(rand(2001,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};
+    },
+    /* 19 — entier < 1000 soustrait de décimal */
+    function(lv){
+      if(lv===1){var b=rnd1(rand(1501,3999)/10),a=rand(50,200);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===2){var b=rnd1(rand(2501,5999)/10),a=rand(100,400);return{q:fmt(b)+' \u2212 '+a,ans:rnd1(b-a)};}
+      if(lv===3){var b=rnd2(rand(30001,69999)/100),a=rand(100,500);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};}
+      var b=rnd2(rand(50001,99999)/100),a=rand(200,800);return{q:fmt(b)+' \u2212 '+a,ans:rnd2(b-a)};
+    },
+    /* 20—25 : variantes décimaux */
+    function(lv){var b=rnd1(rand(lv===1?151:lv===2?251:lv===3?501:701,lv===1?399:lv===2?599:lv===3?899:999)/10);var a=rnd1(rand(51,Math.round(b*10)-5)/10);return{q:fmt(b)+' \u2212 '+fmt(a),ans:rnd1(b-a)};},
+    function(lv){var a=rnd1(rand(lv===1?31:lv===2?41:lv===3?51:61,lv===1?59:lv===2?79:lv===3?89:99)/10);var b=rnd1(rand(11,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
+    function(lv){var a=rnd2(rand(lv===1?201:lv===2?301:lv===3?401:501,lv===1?399:lv===2?599:lv===3?799:999)/100);var b=rnd2(rand(101,Math.round(a*100)-5)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
+    function(lv){var a=rnd1(rand(lv===1?151:lv===2?251:lv===3?401:601,lv===1?399:lv===2?599:lv===3?799:999)/10);var b=rnd1(rand(51,Math.round(a*10)-5)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};},
+    function(lv){var a=rnd2(rand(lv===1?1501:lv===2?2501:lv===3?4001:6001,lv===1?3999:lv===2?5999:lv===3?7999:9999)/100);var b=rnd2(rand(501,Math.round(a*100)-1)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};},
+    function(lv){
+      if(lv===1){var a=rand(300,600),b=rand(100,a-100);return{q:a+' \u2212 '+b,ans:a-b};}
+      if(lv===2){var a=rnd1(rand(3001,6999)/10),b=rand(100,300);return{q:fmt(a)+' \u2212 '+b,ans:rnd1(a-b)};}
+      if(lv===3){var a=rnd1(rand(5001,8999)/10),b=rnd1(rand(2001,4999)/10);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd1(a-b)};}
+      var a=rnd2(rand(40001,89999)/100),b=rnd2(rand(20001,Math.round(a*100)-100)/100);return{q:fmt(a)+' \u2212 '+fmt(b),ans:rnd2(a-b)};
     },
   ],
 
   mul:[
     /* 0 — tables 2 à 4 */
     function(lv){
-      // CE2:t2-3 b1-6 | CM1:t2-4 b1-8 | CM2:t2-4 b1-10 | 6e:t2-4 b5-12
-      var tMax=[3,4,4,4],blo=[1,1,1,5],bhi=[6,8,10,12];
-      var t=rand(2,tMax[lv-1]),b=rand(blo[lv-1],bhi[lv-1]);
-      return{q:t+' \u00d7 '+b,ans:t*b};
+      if(lv===1){var b=rand(1,5);return{q:'2 \u00d7 '+b,ans:2*b};}
+      if(lv===2){var t=pick([2,3,4]);var b=rand(2,7);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===3){var t=pick([2,3,4]);var b=rand(6,10);return{q:t+' \u00d7 '+b,ans:t*b};}
+      var t=pick([2,3,4]);var b=rand(9,12);return{q:t+' \u00d7 '+b,ans:t*b};
     },
-    /* 1 — nb<10 × 2 */
+    /* 1 — nb < 10 × 2 */
     function(lv){
-      var hi=[5,7,8,9];var a=rand(2,hi[lv-1]);
-      return{q:a+' \u00d7 2',ans:a*2};
+      if(lv===1){var a=rand(2,5);return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===2){var a=rand(4,8);return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===3){var a=rand(6,9);return{q:a+' \u00d7 2',ans:a*2};}
+      return{q:'9 \u00d7 2',ans:18};
     },
     /* 2 — tables 5 et 6 */
     function(lv){
-      var bhi=[6,8,10,12];var t=pick([5,6]);var b=rand(2,bhi[lv-1]);
-      return{q:t+' \u00d7 '+b,ans:t*b};
+      if(lv===1){var b=rand(1,5);return{q:'5 \u00d7 '+b,ans:5*b};}
+      if(lv===2){var t=pick([5,6]);var b=rand(2,7);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===3){var t=pick([5,6]);var b=rand(5,10);return{q:t+' \u00d7 '+b,ans:t*b};}
+      var t=pick([5,6]);var b=rand(8,12);return{q:t+' \u00d7 '+b,ans:t*b};
     },
     /* 3 — tables 2 à 6 */
-    function(lv){var bhi=[6,8,10,12];var t=rand(2,6);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
+    function(lv){
+      if(lv===1){var t=rand(2,4);var b=rand(1,5);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===2){var t=rand(2,6);var b=rand(2,7);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===3){var t=rand(2,6);var b=rand(5,10);return{q:t+' \u00d7 '+b,ans:t*b};}
+      var t=rand(2,6);var b=rand(8,12);return{q:t+' \u00d7 '+b,ans:t*b};
+    },
     /* 4 — tables 7 à 9 */
-    function(lv){var bhi=[5,8,10,12];var t=rand(7,9);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
+    function(lv){
+      if(lv===1){var t=rand(7,9);var b=rand(1,4);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===2){var t=rand(7,9);var b=rand(2,6);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===3){var t=rand(7,9);var b=rand(5,9);return{q:t+' \u00d7 '+b,ans:t*b};}
+      var t=rand(7,9);var b=rand(8,12);return{q:t+' \u00d7 '+b,ans:t*b};
+    },
     /* 5 — tables 2 à 9 */
-    function(lv){var bhi=[6,8,10,12];var t=rand(2,9);var b=rand(2,bhi[lv-1]);return{q:t+' \u00d7 '+b,ans:t*b};},
-    /* 6 — nb<100 × 2 */
-    function(lv){var lo=[5,15,30,50],hi=[15,35,65,99];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 2',ans:a*2};},
-    /* 7 — nb<1000 × 10/100/1000 */
     function(lv){
-      var facts=[[10],[10],[10,100],[10,100,1000]];
-      var f=pick(facts[lv-1]);
-      var hi=[15,50,200,999];var a=rand(2,hi[lv-1]);
-      return{q:a+' \u00d7 '+f,ans:a*f};
+      if(lv===1){var t=rand(2,6);var b=rand(1,5);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===2){var t=rand(2,9);var b=rand(2,7);return{q:t+' \u00d7 '+b,ans:t*b};}
+      if(lv===3){var t=rand(2,9);var b=rand(5,10);return{q:t+' \u00d7 '+b,ans:t*b};}
+      var t=rand(2,9);var b=rand(8,12);return{q:t+' \u00d7 '+b,ans:t*b};
     },
-    /* 8 — nb<100 × 4 */
-    function(lv){var lo=[3,8,15,25],hi=[8,20,40,99];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 4',ans:a*4};},
-    /* 9 — nb<1000 × 2 */
-    function(lv){var lo=[20,50,100,250],hi=[60,150,400,999];var a=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 2',ans:a*2};},
-    /* 10 — nb déc × 10/100/1000 */
+    /* 6 — nb < 100 × 2 */
     function(lv){
-      var facts=[[10],[10,100],[100],[100,1000]];
-      var f=pick(facts[lv-1]);
-      var dp=(lv===1)?1:(lv===2)?1:(lv===3)?2:3;
-      var a=Math.round(rand(1,99)*Math.pow(10,-dp)*1000)/1000;
-      return{q:fmt(a)+' \u00d7 '+f,ans:rnd2(a*f)};
+      if(lv===1){var a=rand(1,4)*10;return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===2){var a=rand(11,29);while(a%10*2>=10){a=rand(11,29);}return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===3){var a=rand(25,49);return{q:a+' \u00d7 2',ans:a*2};}
+      var a=rand(50,99);return{q:a+' \u00d7 2',ans:a*2};
     },
-    /* 11 — nb<5 × nb<100 */
-    function(lv){var bm=[15,30,60,99];var a=rand(2,4);var b=rand(5,bm[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
-    /* 12 — nb<10 × nb<100 */
-    function(lv){var am=[4,6,8,9],bm=[15,30,60,99];var a=rand(2,am[lv-1]);var b=rand(10,bm[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
-    /* 13 — 2 nb<100 */
-    function(lv){var lo=[10,12,15,20],hi=[14,20,40,99];var a=rand(lo[lv-1],hi[lv-1]);var b=rand(lo[lv-1],hi[lv-1]);return{q:a+' \u00d7 '+b,ans:a*b};},
+    /* 7 — × 10, 100, 1000 */
+    function(lv){
+      if(lv===1){var a=rand(2,9);return{q:a+' \u00d7 10',ans:a*10};}
+      if(lv===2){var a=rand(2,25);var f=pick([10,100]);return{q:a+' \u00d7 '+f,ans:a*f};}
+      if(lv===3){var a=rnd1(rand(11,99)/10);return{q:fmt(a)+' \u00d7 10',ans:rnd1(a*10)};}
+      var a=rnd2(rand(101,999)/100);var f=pick([10,100]);return{q:fmt(a)+' \u00d7 '+f,ans:rnd2(a*f)};
+    },
+    /* 8 — × 4 */
+    function(lv){
+      if(lv===1){var a=rand(2,10);return{q:a+' \u00d7 4',ans:a*4};}
+      if(lv===2){var a=rand(10,20);return{q:a+' \u00d7 4',ans:a*4};}
+      if(lv===3){var a=rand(15,35);return{q:a+' \u00d7 4',ans:a*4};}
+      var a=rand(25,50);return{q:a+' \u00d7 4',ans:a*4};
+    },
+    /* 9 — nb < 1000 × 2 */
+    function(lv){
+      if(lv===1){var a=rand(10,30)*10;return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===2){var a=rand(50,150);return{q:a+' \u00d7 2',ans:a*2};}
+      if(lv===3){var a=rand(100,300);return{q:a+' \u00d7 2',ans:a*2};}
+      var a=rand(250,499);return{q:a+' \u00d7 2',ans:a*2};
+    },
+    /* 10 — décimal × 10/100/1000 */
+    function(lv){
+      if(lv===1){var a=rnd1(rand(11,49)/10);return{q:fmt(a)+' \u00d7 10',ans:rnd1(a*10)};}
+      if(lv===2){var a=rnd1(rand(11,99)/10);var f=pick([10,100]);return{q:fmt(a)+' \u00d7 '+f,ans:rnd1(a*f)};}
+      if(lv===3){var a=rnd2(rand(101,999)/100);var f=pick([10,100]);return{q:fmt(a)+' \u00d7 '+f,ans:rnd2(a*f)};}
+      var a=rnd2(rand(101,999)/100);var f=pick([100,1000]);return{q:fmt(a)+' \u00d7 '+f,ans:rnd2(a*f)};
+    },
+    /* 11 — nb < 5 × nb < 100 */
+    function(lv){
+      if(lv===1){var a=rand(2,3);var b=rand(10,20);return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===2){var a=rand(2,4);var b=rand(10,30);return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===3){var a=rand(3,4);var b=rand(20,50);return{q:a+' \u00d7 '+b,ans:a*b};}
+      var a=rand(3,4);var b=rand(40,99);return{q:a+' \u00d7 '+b,ans:a*b};
+    },
+    /* 12 — nb < 10 × nb < 100 */
+    function(lv){
+      if(lv===1){var a=rand(2,4);var b=rand(10,20);return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===2){var a=rand(2,5);var b=rand(10,30);return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===3){var a=rand(4,7);var b=rand(20,50);return{q:a+' \u00d7 '+b,ans:a*b};}
+      var a=rand(6,9);var b=rand(30,99);return{q:a+' \u00d7 '+b,ans:a*b};
+    },
+    /* 13 — 2 nombres < 100 */
+    function(lv){
+      if(lv===1){var a=rand(1,5)*10;var b=rand(1,5)*10;return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===2){var a=rand(1,5)*10;var b=rand(2,9);return{q:a+' \u00d7 '+b,ans:a*b};}
+      if(lv===3){var a=rand(11,25);var b=rand(11,25);return{q:a+' \u00d7 '+b,ans:a*b};}
+      var a=rand(12,49);var b=rand(12,49);return{q:a+' \u00d7 '+b,ans:a*b};
+    },
   ],
 
   div:[
-    /* 0 — nb pair < 30 ÷ 2 */
-    function(lv){var hi=[8,12,16,28];var a=rand(1,hi[lv-1])*2;return{q:a+' \u00f7 2',ans:a/2};},
-    /* 1 — nb pair < 100 ÷ 2 */
-    function(lv){var hi=[20,40,70,98];var a=rand(2,Math.floor(hi[lv-1]/2))*2;return{q:a+' \u00f7 2',ans:a/2};},
-    /* 2 — nb<100 ÷ 1-2 chiffres, résultat entier */
+    /* 0 — pair < 30 ÷ 2 */
     function(lv){
-      var dm=[4,6,9,15],qm=[5,10,15,20];
-      var d=rand(2,dm[lv-1]);var q=rand(2,qm[lv-1]);
-      return{q:(d*q)+' \u00f7 '+d,ans:q};
+      if(lv===1){var q=rand(1,5);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===2){var q=rand(4,9);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===3){var q=rand(7,12);return{q:(q*2)+' \u00f7 2',ans:q};}
+      var q=rand(10,14);return{q:(q*2)+' \u00f7 2',ans:q};
     },
-    /* 3 — nb pair < 1000 ÷ 2 */
-    function(lv){var hi=[100,250,500,998];var a=rand(1,Math.floor(hi[lv-1]/2))*2;return{q:a+' \u00f7 2',ans:a/2};},
-    /* 4 — nb<100 ÷ 1-2 chiffres, reste éventuel */
+    /* 1 — pair < 100 ÷ 2 */
     function(lv){
-      var dm=[5,8,12,20],am=[30,60,80,99];
-      var d=rand(2,dm[lv-1]);var a=rand(d+1,am[lv-1]);
-      var q=Math.floor(a/d);var r=a%d;
-      return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};
+      if(lv===1){var q=rand(5,15);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===2){var q=rand(12,25);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===3){var q=rand(20,40);return{q:(q*2)+' \u00f7 2',ans:q};}
+      var q=rand(35,49);return{q:(q*2)+' \u00f7 2',ans:q};
     },
-    /* 5 — nb<100 ÷ 2, résultat déc possible */
-    function(lv){var hi=[20,45,75,99];var a=rand(3,hi[lv-1]);return{q:a+' \u00f7 2',ans:fmt(a/2)};},
-    /* 6 — nb pair < 1000 ÷ 4, résultat entier */
-    function(lv){var qm=[10,30,80,200];var q=rand(2,qm[lv-1]);return{q:(q*4)+' \u00f7 4',ans:q};},
-    /* 7 — nb<100 ÷ 10 ou 100 */
+    /* 2 — diviseur 1-2 chiffres, résultat entier */
     function(lv){
-      var facts=[[10],[10],[10,100],[10,100]];
-      var f=pick(facts[lv-1]);var a=rand(1,99);
-      return{q:a+' \u00f7 '+f,ans:fmt(a/f)};
+      if(lv===1){var d=pick([2,3]);var q=rand(2,8);return{q:(d*q)+' \u00f7 '+d,ans:q};}
+      if(lv===2){var d=rand(2,5);var q=rand(3,10);return{q:(d*q)+' \u00f7 '+d,ans:q};}
+      if(lv===3){var d=rand(2,9);var q=rand(4,12);return{q:(d*q)+' \u00f7 '+d,ans:q};}
+      var d=rand(11,15);var q=rand(3,8);return{q:(d*q)+' \u00f7 '+d,ans:q};
     },
-    /* 8 — nb<1000 ÷ 4, résultat déc possible */
-    function(lv){var hi=[100,250,600,999];var a=rand(2,hi[lv-1]);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};},
-    /* 9 — nb<1000 ÷ nb 2-3 chiffres, reste */
+    /* 3 — pair < 1000 ÷ 2 */
     function(lv){
-      var dr=[[10,20],[10,30],[20,80],[50,200]];
-      var r=dr[lv-1];var d=rand(r[0],r[1]);
-      var am=[200,400,700,999];var a=rand(d+1,am[lv-1]);
-      var q=Math.floor(a/d);var re=a%d;
-      return{q:a+' \u00f7 '+d,ans:re===0?String(q):q+' R'+re};
+      if(lv===1){var q=rand(50,100);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===2){var q=rand(80,150);return{q:(q*2)+' \u00f7 2',ans:q};}
+      if(lv===3){var q=rand(120,250);return{q:(q*2)+' \u00f7 2',ans:q};}
+      var q=rand(200,499);return{q:(q*2)+' \u00f7 2',ans:q};
+    },
+    /* 4 — avec reste éventuel */
+    function(lv){
+      if(lv===1){var d=rand(2,4);var a=rand(10,30);var q=Math.floor(a/d);var r=a%d;return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      if(lv===2){var d=rand(2,7);var a=rand(15,60);var q=Math.floor(a/d);var r=a%d;return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      if(lv===3){var d=rand(3,9);var a=rand(30,99);var q=Math.floor(a/d);var r=a%d;return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      var d=rand(6,15);var a=rand(50,200);var q=Math.floor(a/d);var r=a%d;return{q:a+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};
+    },
+    /* 5 — ÷ 2, résultat décimal possible */
+    function(lv){
+      if(lv===1){var a=rand(3,15);return{q:a+' \u00f7 2',ans:fmt(a/2)};}
+      if(lv===2){var a=rand(11,35);return{q:a+' \u00f7 2',ans:fmt(a/2)};}
+      if(lv===3){var a=rand(25,75);return{q:a+' \u00f7 2',ans:fmt(a/2)};}
+      var a=rand(51,99);return{q:a+' \u00f7 2',ans:fmt(a/2)};
+    },
+    /* 6 — ÷ 4, résultat entier */
+    function(lv){
+      if(lv===1){var q=rand(2,8);return{q:(q*4)+' \u00f7 4',ans:q};}
+      if(lv===2){var q=rand(5,15);return{q:(q*4)+' \u00f7 4',ans:q};}
+      if(lv===3){var q=rand(10,40);return{q:(q*4)+' \u00f7 4',ans:q};}
+      var q=rand(30,150);return{q:(q*4)+' \u00f7 4',ans:q};
+    },
+    /* 7 — ÷ 10 ou 100 */
+    function(lv){
+      if(lv===1){var a=rand(2,9)*10;return{q:a+' \u00f7 10',ans:a/10};}
+      if(lv===2){var a=rand(10,90)*10;return{q:a+' \u00f7 10',ans:a/10};}
+      if(lv===3){var a=rand(10,90)*100;var f=pick([10,100]);return{q:a+' \u00f7 '+f,ans:fmt(a/f)};}
+      var a=rand(100,900);var f=pick([10,100]);return{q:a+' \u00f7 '+f,ans:fmt(a/f)};
+    },
+    /* 8 — ÷ 4, résultat décimal possible */
+    function(lv){
+      if(lv===1){var a=rand(2,20);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};}
+      if(lv===2){var a=rand(10,50);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};}
+      if(lv===3){var a=rand(30,200);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};}
+      var a=rand(100,500);return{q:a+' \u00f7 4',ans:fmt(Math.round(a/4*100)/100)};
+    },
+    /* 9 — diviseur 2-3 chiffres, reste éventuel */
+    function(lv){
+      var d,q,r;
+      if(lv===1){d=rand(10,15);q=rand(2,5);r=rand(0,d-1);return{q:(d*q+r)+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      if(lv===2){d=rand(11,20);q=rand(3,8);r=rand(0,d-1);return{q:(d*q+r)+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      if(lv===3){d=rand(15,30);q=rand(5,15);r=rand(0,d-1);return{q:(d*q+r)+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};}
+      d=rand(25,99);q=rand(5,20);r=rand(0,d-1);return{q:(d*q+r)+' \u00f7 '+d,ans:r===0?String(q):q+' reste '+r};
     },
   ],
 };
+
 
 /* ════ ÉTAT ════ */
 var cfg={op:'add',type:null,timePerQ:20,totalQ:8};
@@ -1106,7 +1279,25 @@ function updateProgress(){
 /* ════ SESSION ════ */
 function startSession(){
   sess.questions=LEVELS.map(function(lv){
-    var arr=[];for(var i=0;i<cfg.totalQ;i++)arr.push(genQ(lv.n));return arr;
+    var arr=[];
+    var maxTries=8;
+    for(var i=0;i<cfg.totalQ;i++){
+      var q,tries=0,ok=false;
+      while(!ok && tries<maxTries){
+        q=genQ(lv.n); tries++;
+        // Vérifier unicité : pas de nombre déjà vu dans les opérandes ou les résultats
+        var nums=q.q.replace(/[^0-9,\.]/g,' ').trim().split(/\s+/).map(function(s){return s.replace(',','.');});
+        var ansStr=String(q.ans);
+        var seen=arr.slice(-Math.min(arr.length,cfg.totalQ)).map(function(x){
+          return x.q.replace(/[^0-9,\.]/g,' ').trim().split(/\s+/).concat([String(x.ans)]);
+        });
+        var flat=[];seen.forEach(function(a){a.forEach(function(v){flat.push(v.replace(',','.'))||0;});});
+        var dup=nums.some(function(n){return flat.indexOf(n)>=0;})||flat.indexOf(ansStr)>=0;
+        if(!dup) ok=true;
+      }
+      arr.push(q);
+    }
+    return arr;
   });
   sess.qIndex=0;sess.paused=false;sess.manual=false;
   sess.history=LEVELS.map(function(){return[];});
@@ -1330,24 +1521,42 @@ function buildPrintSheet(){
 }
 
 function buildPrintLevels(withAns){
+  /* Hauteur disponible par colonne (hors titre niveau + en-tête page) ≈ 155mm
+     Chaque item occupe 2 lignes. On calcule la taille de police pour que
+     nQ items tiennent dans 155mm. En pt, 1pt ≈ 0.353mm.
+     Hauteur par item ≈ fs*2 * 0.353mm * 1.3 (leading) + 0.8mm padding
+     On résout : nQ * (2 * fs * 0.353 * 1.3 + 0.8) ≤ 155
+     => fs ≤ (155/nQ - 0.8) / (2 * 0.353 * 1.3)
+  */
+  var nQ=cfg.totalQ;
+  var availMm=152;
+  var fsCalc=(availMm/nQ - 0.8)/(2*0.353*1.35);
+  var fs=Math.max(6, Math.min(11, Math.floor(fsCalc*10)/10));
+  var fsNum=Math.max(5, fs-1);
+
   var html='<div class="print-levels">';
   LEVELS.forEach(function(lv,i){
     var hist=sess.history[i];
-    html+='<div>';
-    html+='<div class="print-lv-title" style="--col:'+lv.printCol+'">Niveau '+lv.n+'</div>';
+    html+='<div class="print-lv-col">';
+    html+='<div class="print-lv-title" style="--col:'+lv.printCol+'">Niv. '+lv.n+'</div>';
     hist.forEach(function(h,idx){
       var hl=(idx%4===0)?'print-item hl':'print-item';
-      var gap=(idx>0&&idx%3===0)?' gap-top':'';
-      var ansHtml=withAns
-        ?'<span class="print-ans" style="color:'+lv.printCol+'">'+h.ans+'</span>'
-        :'<span class="print-ans blank"></span>';
-      html+='<div class="'+hl+gap+'">'+
-        '<span class="print-num" style="color:'+lv.printCol+'">'+(idx+1)+'.</span>'+
-        '<span class="print-q">'+h.q+'</span>'+
-        '<span class="print-eq">=</span>'+
-        ansHtml+'</div>';
+      /* Pas d'espace entre les calculs */
+      var ansContent=withAns
+        ?'<span class="print-ans" style="color:'+lv.printCol+';font-size:'+fs+'pt"><strong>'+h.ans+'</strong></span>'
+        :'<span class="print-ans blank" style="font-size:'+fs+'pt"></span>';
+      html+='<div class="'+hl+'">'+
+        '<div class="print-line1">'+
+          '<span class="print-num" style="color:'+lv.printCol+';font-size:'+fsNum+'pt">'+(idx+1)+'.</span>'+
+          '<span class="print-q" style="font-size:'+fs+'pt">'+h.q+'</span>'+
+        '</div>'+
+        '<div class="print-line2">'+
+          '<span class="print-eq" style="font-size:'+fs+'pt">=</span>'+
+          ansContent+
+        '</div>'+
+      '</div>';
     });
-    if(!hist.length)html+='<div class="print-item"><span class="print-q" style="color:#aaa">—</span></div>';
+    if(!hist.length)html+='<div class="print-item"><span class="print-q" style="color:#aaa;font-size:'+fs+'pt">—</span></div>';
     html+='</div>';
   });
   return html+'</div>';
